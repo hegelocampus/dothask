@@ -1,7 +1,7 @@
 module Main (main) where
 
-import Dothask (someFunc)
+import Dothask (set_dots)
 
 
 main :: IO ()
-main = someFunc
+main = set_dots

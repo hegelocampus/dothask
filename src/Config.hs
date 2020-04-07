@@ -7,7 +7,14 @@ module Config
 
 import qualified Data.Yaml as Y
 
-main :: IO ()
-main = do
-  res <- Y.decodeFileThrow "../dot.config.yaml" -- This path should not be hardcoded in a later verison
-  print res
+parseConfig :: IO ()
+parseConfig = do
+  -- The format of the imoported file looks like:
+  -- [
+  --    fromList [("defaults", Object (fromList ["link",Object (fromList
+  --      [("force", Bool True), ("create", Bool True)]
+  --    )])],
+  --    fromList [("~/.foo",Null),.("~/.bar,Null),..]
+  -- ]
+  res <- Y.decodeFileThrow "dot.config.yaml" -- This path should not be hardcoded in a later verison
+  print (res :: [Y.Object])

@@ -6,10 +6,12 @@ Maintainer: Bee Ellis <pizzaman8099@gmail.com>
 Dotfile setup automation written in Haskell
 -}
 
-module Dothask
-       ( someFunc
-       ) where
+module Dothask (set_dots) where
+
+import Config
 
 
-someFunc :: IO ()
-someFunc = putStrLn ("someFunc" :: String)
+set_dots :: IO ()
+set_dots = do
+  parseConfig
+
