@@ -14,7 +14,7 @@ import Data.HashMap.Strict as HM
 data Config =
   Config {
     defaults  :: Y.Object
-  , link      :: HM.HashMap FilePath FilePath
+  , link      :: HM.HashMap FilePath (Maybe FilePath)
   } deriving stock (Eq, Show)
 
 instance FromJSON Config where
