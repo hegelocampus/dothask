@@ -28,13 +28,6 @@ instance FromJSON Config where
 -- can pass in a custom config path
 parseConfig :: IO ()
 parseConfig = do
-  -- The format of the imoported file looks like:
-  -- [
-  --    fromList [("defaults", Object (fromList ["link", Object (fromList
-  --      [("force", Bool True), ("create", Bool True)]
-  --    )])],
-  --    fromList ["link", Object ("~/.foo",Null),.("~/.bar,Null),..]
-  -- ]
   res <- Y.decodeFileThrow "dot.config.yaml"
   --let lnks = fromMaybe HM.empty $ (res .: "link")
   print (res :: Config)
