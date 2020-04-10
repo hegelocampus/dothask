@@ -51,6 +51,7 @@ executable dothask
   build-depends:       dothask
                      , yaml
                      , unordered-containers
+                     , exceptions
   ghc-options:         -threaded
                        -rtsopts
                        -with-rtsopts=-N

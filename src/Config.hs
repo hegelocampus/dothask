@@ -9,7 +9,8 @@ module Config
 import qualified Data.Yaml as Y
 import Data.Yaml (FromJSON(..), (.:))
 import Data.HashMap.Strict as HM
---import Data.Maybe (fromMaybe)
+import Control.Exception (throwIO)
+import Data.Either (isRight)
 
 data Config =
   Config {
@@ -26,8 +27,10 @@ instance FromJSON Config where
 
 -- It may make sense for the file path to be passed in as an argument so that the user
 -- can pass in a custom config path
-parseConfig :: IO ()
-parseConfig = do
-  res <- Y.decodeFileThrow "dot.config.yaml"
-  --let lnks = fromMaybe HM.empty $ (res .: "link")
-  print (res :: Config)
+parseConfig :: String -> IO Config
+parseConfig p = do
+  res <- Y.decodeFileThrow p
+  either throwIO return res
+
+--let lnks = fromMaybe HM.empty $ (res .: "link")
+

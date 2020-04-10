@@ -13,5 +13,5 @@ import Config
 
 set_dots :: IO ()
 set_dots = do
-  parseConfig
+  parseConfig "dot.config.yaml" -- This should be passed in
 
