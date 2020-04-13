@@ -9,8 +9,6 @@ module Config
 import qualified Data.Yaml as Y
 import Data.Yaml (FromJSON(..), (.:))
 import Data.HashMap.Strict as HM
-import Control.Exception (throwIO)
-import Data.Either (isRight)
 
 data Config =
   Config {
@@ -29,8 +27,10 @@ instance FromJSON Config where
 -- can pass in a custom config path
 parseConfig :: String -> IO Config
 parseConfig p = do
+  -- res is the type of (MonadIO FromJSON)
   res <- Y.decodeFileThrow p
-  either throwIO return res
+  -- This doesn't work becauce both the functions passed into either need to
+  -- return the same type
+  return (res :: Config)
 
---let lnks = fromMaybe HM.empty $ (res .: "link")
 
