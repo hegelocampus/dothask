@@ -21,4 +21,9 @@ params = Params
 params :: Parser Params
 
 main :: IO ()
-main = build_dots
+main = execParser opts >>= build_dots
+  where
+    opts = info (helper <*> params)
+      ( fullDesc
+      <> progDesc "Automatically create symlinks for configuration files"
+      <> header "dothask - a dotfile setup automation tool" )
