@@ -1,0 +1,16 @@
+defaults:
+    link:
+      create: true
+      force: true
+link:
+  ~/.profile:
+  ~/.bash_profile:
+  ~/.bashrc:
+  ~/.bashbee:
+  ~/.bash_logout:
+  ~/.gitconfig:
+  ~/.Xmodmap:
+  ~/.Xresources:
+  ~/.xinitrc:
+  ~/.xprofile:
+
