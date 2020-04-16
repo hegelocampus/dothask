@@ -14,11 +14,12 @@ data Config =
   } deriving stock (Eq, Show)
 
 instance FromJSON Config where
-  parseJSON (Y.Object v) =
-    Config <$>
-    v .: "defaults" <*>
-    v .: "link"
-  parseJSON _ = fail "Expected Object for Config value"
+  parseJSON (Y.Object v) = Config
+    <$> v .: "defaults"
+    <*> v .: "link"
+  parseJSON _ =
+    Y.prependFailure "parsing Config failed, "
+      (typeMismatch "Object" invalid)
 
 -- It may make sense for the file path to be passed in as an argument so that the user
 -- can pass in a custom config path
