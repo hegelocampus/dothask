@@ -1,10 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DerivingStrategies #-}
 
-module Config
-  (
-    parseConfig
-  ) where
+module Config (parseConfig) where
 
 import qualified Data.Yaml as Y
 import Data.Yaml (FromJSON(..), (.:))
@@ -32,5 +29,4 @@ parseConfig p = do
   -- This doesn't work becauce both the functions passed into either need to
   -- return the same type
   return (res :: Config)
-
 

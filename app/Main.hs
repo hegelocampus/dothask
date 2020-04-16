@@ -2,11 +2,11 @@ module Main (main) where
 
 import Options.Applicative
 import Data.Semigroup ((<>))
-import Dothask (build_dots)
+import Dothask (buildDots)
 
 data Params = Params
-  { optQuiet    :: Bool
-  , configPath  :: String }
+  { configPath  :: String
+  , optQuiet    :: Bool}
 
 params :: Parser Params
 params = Params
@@ -18,10 +18,15 @@ params = Params
       <> short 'q'
       <> help "Set quiet mode" )
 
-params :: Parser Params
+-- Config path doesn't rely on the config file so it can be set early
+buildDotsWrapper :: Params -> IO ()
+buildDotsWrapper (Params configPath optQuiet)
+  | length configPath > 0 = buildDots path optQuiet
+  | otherwise             = buildDots defPath optQuiet
+  where defPath = "./dot.config.yaml"
 
 main :: IO ()
-main = execParser opts >>= build_dots
+main = execParser opts >>= buildDotsWrapper
   where
     opts = info (helper <*> params)
       ( fullDesc
