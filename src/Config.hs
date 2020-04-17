@@ -20,6 +20,7 @@ data LinkConfig =
 
 instance FromJSON LinkConfig
 
+-- TODOMAYBE: Move type definitions to their own files to facilitate use
 data Config =
   Config {
     defaults  :: Y.Object
@@ -31,8 +32,7 @@ instance FromJSON Config
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
--- It may make sense for the file path to be passed in as an argument so that the user
--- can pass in a custom config path
+-- | Parse config file into Config object
 parseConfig :: String -> IO Config
 parseConfig p = do
   -- res is the type of (MonadIO FromJSON)
