@@ -21,6 +21,10 @@ source-repository head
 
 common common-options
   build-depends:       base ^>= 4.13.0.0
+                     , yaml
+                     , turtle
+                     , unordered-containers
+                     , optparse-applicative
 
   ghc-options:         -Wall
                        -Wcompat
@@ -49,9 +53,6 @@ executable dothask
   hs-source-dirs:      app
   main-is:             Main.hs
   build-depends:       dothask
-                     , yaml
-                     , unordered-containers
-                     , optparse-applicative
   ghc-options:         -threaded
                        -rtsopts
                        -with-rtsopts=-N
