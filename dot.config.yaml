@@ -1,7 +1,7 @@
 defaults:
-    link:
-      create: true
-      force: true
+  link:
+    create: true
+    force: true
 link:
   ~/.profile:
   ~/.bash_profile:
