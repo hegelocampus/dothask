@@ -1,18 +1,26 @@
 {- |
 Copyright: (c) 2020 Bee Ellis
 SPDX-License-Identifier: MIT
-Maintainer: Bee Ellis <pizzaman8099@gmail.com>
+Maintainer: Bee Ellis <bellis8099@gmail.com>
 
 Dotfile setup automation written in Haskell
 -}
 
-module Dothask (build_dots) where
+{-# LANGUAGE OverloadedStrings #-}
 
+module Dothask (buildDots) where
+
+import Data.Yaml ((.:))
+import Turtle
 import Config
 
+-- Actually build the Symlinks
+--buildLinks :: Config link -> IO ()
+--buildLinks links = mapM (/lnk -> symLink $
 
-build_dots :: IO ()
-build_dots = do
-  res <- parseConfig "dot.config.yaml" -- This should be passed in
-  print res
+buildDots :: String -> Bool -> IO ()
+buildDots configPath isQuiet = do
+  res <- parseConfig configPath
+  print (res)
+
 
