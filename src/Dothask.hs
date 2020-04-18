@@ -11,12 +11,7 @@ Dotfile setup automation written in Haskell
 module Dothask (buildDots) where
 
 import Data.Yaml ((.:))
-import Turtle
 import Config
-
--- Actually build the Symlinks
---buildLinks :: Config link -> IO ()
---buildLinks links = mapM (/lnk -> symLink $
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath isQuiet = do
