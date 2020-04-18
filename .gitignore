@@ -50,5 +50,7 @@ tags
 .dir-locals.el
 TAGS
 
+test_dir
+
 # other
 .DS_Store
