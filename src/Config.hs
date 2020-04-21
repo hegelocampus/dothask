@@ -35,19 +35,28 @@ instance FromJSON Config
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
--- | Clean target if needed
-cleanTarget :: FilePath -> IO ()
-cleanTarget pth
-  | testfile pth = rm pth >> stdout ("Removing " ++ pth)
+-- | Clean target symlink if needed
+cleanTargetLink :: FilePath -> Bool -> IO ()
+cleanTargetLink pth reln
+  | isSymbolicLink pth && reln = rm pth >> stdout ("Removing existing symlink: " ++ pth)
+  | isSymbolicLink pth && not reln = ioError $ "symlink " ++ pth ++ " already exists!"
   | otherwise = stdout ("Target " ++ pth ++ " is already clean.")
+
+-- | Clean target file if needed
+cleanTargetFile :: FilePath -> IO ()
+cleanTargetFile pth 
+  | testfile pth = rm pth >> stdout ("Removing existing file: " ++ pth)
+  | otherwise = stdout ("Target " ++ pth ++ " is clean.")
 
 -- | Check that the tree exists and if it can be created
 checkTree :: FilePath -> Bool -> IO ()
 checkTree path allowed
   | allowed = mktree $ dirpath >> stdout ("Created directory: " ++ dirpath)
-  | testfilepth $ dirpath = stdout $ dirpath ++ " already exists"
+  | testdir dirpath = stdout $ dirpath ++ " already exists"
   | otherwise = ioError $ "Directory " ++ dirpath ++ " does not exist!"
   where dirpath = directory path
+
+-- NOTE: symlink fails if the file already exists
 
 -- | Build symlink for LinkConfig datatype
 -- | Need to negotiate LinkConfig w/ set defaults
@@ -57,8 +66,10 @@ buildLink trg (LinkConfig {create = c, path = src, relink = rln, force = f, rela
   --| (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
   --| (not f) && (doesPathExist trg) = -- Return IO error
   | otherwise = do
-     else if (
-    -- symlink fails if the file already exists
+    checkTree trg c
+    if f
+       then cleanTargetFile trg
+       else cleanTargetLink trg rln
     symLink $
 
 -- | Parse config file into Config object
