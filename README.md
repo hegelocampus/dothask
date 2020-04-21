@@ -39,4 +39,12 @@ shell:
 ### Configuration options
 #### Link
 Link specifies how files and directories should be linked. You may specify a file be forcibly linked, overwriting existing files if they exist.
+##### Format
+Available config parameters:
+| Link Option | Explanation |
+| -- | -- |
+| `path` | The source file for the symlink (default: null, automatic) |
+| `create` | When true, create parent directories to the link as needed (default: false) |
+| `relink` | Removes the old target if it's a symlink (default: false) |
+| `force` | Force removes the old target (default: false) |
 
