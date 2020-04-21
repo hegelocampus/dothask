@@ -53,3 +53,7 @@ Create commands specify directories to be created.
 ##### Format
 Specified as an array of directories.
 ##### Example
+
+
+## License
+Copyright (c) 2020 Bee Ellis. Released under the MIT License. See [LICENSE.md][license] for details.
