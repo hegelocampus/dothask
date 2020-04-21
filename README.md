@@ -47,4 +47,9 @@ Available config parameters:
 | `create` | When true, create parent directories to the link as needed (default: false) |
 | `relink` | Removes the old target if it's a symlink (default: false) |
 | `force` | Force removes the old target (default: false) |
-
+##### Example
+#### Create -- Not yet implemented
+Create commands specify directories to be created.
+##### Format
+Specified as an array of directories.
+##### Example
