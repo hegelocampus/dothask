@@ -60,17 +60,19 @@ checkTree path allowed
 
 -- | Build symlink for LinkConfig datatype
 -- | Need to negotiate LinkConfig w/ set defaults
--- | This Function will raise an IO error if it is unable to create the symlink
+-- | This Function will raise an IO error if it is unable to create the
+-- | symlink, this exception should !not! disrupt the execution of the
+-- | remainder of the symlinks.
 buildLink :: FilePath -> LinkConfig -> IO ()
 buildLink trg (LinkConfig {create = c, path = src, relink = rln, force = f, relative = rel})
   --| (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
   --| (not f) && (doesPathExist trg) = -- Return IO error
   | otherwise = do
+    -- Check that dirtree exits
     checkTree trg c
-    if f
-       then cleanTargetFile trg
-       else cleanTargetLink trg rln
-    symLink $
+    -- Handle existing files
+    if f then cleanTargetFile trg else cleanTargetLink trg rln
+    symLink $ src trg 
 
 -- | Parse config file into Config object
 parseConfig :: String -> IO Config
