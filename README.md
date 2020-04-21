@@ -19,7 +19,7 @@ The expected name for the configuration file is `dot.config.yaml`. You can pass 
 ```yaml
 defaults:
   link:
-	relink: true
+    relink: true
 
 link:
   ~/.dotfiles: ''
