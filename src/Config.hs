@@ -14,7 +14,7 @@ import Prelude hiding (FilePath)
 
 data LinkConfig =
   LinkConfig {
-    create   :: Bool -- Create parent directories as needed (default: null)
+    create   :: Bool -- Create parent directories up to target (default: null)
   , path     :: FilePath -- The source of the symlink (default: false)
   , relink   :: Bool -- Remove the old target if it is a symlink (default: false)
   , force    :: Bool -- Force removal of old target and create new link (default: false)
@@ -36,10 +36,10 @@ instance FromJSON Config
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
 -- | Clean target if needed
-removeFile :: FilePath -> IO ()
-removeFile pth
-  | not testfile pth =
-  | otherwise = 
+cleanTarget :: FilePath -> IO ()
+cleanTarget pth
+  | testfile pth = rm pth >> stdout ("Removing " ++ pth)
+  | otherwise = stdout ("Target " ++ pth ++ " is already clean.")
 
 -- | Build symlink for LinkConfig datatype
 -- | Need to negotiate LinkConfig w/ set defaults
@@ -47,10 +47,6 @@ buildLink :: FilePath -> LinkConfig -> IO ()
 buildLink trg (LinkConfig {create = c, path = src, relink = rln, force = f, relative = rel})
   | (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
   | (not f) && (doesPathExist trg) = -- Return IO error
-  -- I want to recursively call this function but I would need to check if the
-  -- file tree has been created on each successive call which would degrade
-  -- preformance. I think to proceed here this mktree will have to be moved
-  -- into an IO do block
   | otherwise = do
     if c
        then mktree $ directory src >> buildLink 
