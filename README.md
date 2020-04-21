@@ -18,8 +18,8 @@ The expected name for the configuration file is `dot.config.yaml`. You can pass 
 ### Example Configuration file
 ```yaml
 defaults:
-    link:
-      relink: true
+  link:
+	relink: true
 
 link:
   ~/.dotfiles: ''
@@ -51,8 +51,8 @@ Available config parameters:
 ```yaml
 link:
   ~/.vimrc:
-	relink: true
-	path: vim/vimrc
+    relink: true
+    path: vim/vimrc
 ```
 #### Create -- Not yet implemented
 Create commands specify directories to be created.
