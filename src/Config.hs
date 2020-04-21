@@ -41,16 +41,23 @@ cleanTarget pth
   | testfile pth = rm pth >> stdout ("Removing " ++ pth)
   | otherwise = stdout ("Target " ++ pth ++ " is already clean.")
 
+-- | Check that the tree exists and if it can be created
+checkTree :: FilePath -> Bool -> IO ()
+checkTree path allowed
+  | allowed = mktree $ dirpath >> stdout ("Created directory: " ++ dirpath)
+  | testfilepth $ dirpath = stdout $ dirpath ++ " already exists"
+  | otherwise = ioError $ "Directory " ++ dirpath ++ " does not exist!"
+  where dirpath = directory path
+
 -- | Build symlink for LinkConfig datatype
 -- | Need to negotiate LinkConfig w/ set defaults
+-- | This Function will raise an IO error if it is unable to create the symlink
 buildLink :: FilePath -> LinkConfig -> IO ()
 buildLink trg (LinkConfig {create = c, path = src, relink = rln, force = f, relative = rel})
-  | (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
-  | (not f) && (doesPathExist trg) = -- Return IO error
+  --| (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
+  --| (not f) && (doesPathExist trg) = -- Return IO error
   | otherwise = do
-    if c
-       then mktree $ directory src >> buildLink 
-       else if (
+     else if (
     -- symlink fails if the file already exists
     symLink $
 
