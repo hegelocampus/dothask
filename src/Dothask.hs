@@ -16,6 +16,6 @@ import Config
 buildDots :: String -> Bool -> IO ()
 buildDots configPath isQuiet = do
   res <- parseConfig configPath
-  print (res)
+  print res
 
 

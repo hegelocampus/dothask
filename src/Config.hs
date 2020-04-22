@@ -53,8 +53,8 @@ cleanTarget _ _ pth    = stdout ("Assuming target path is clean: " ++ pth)
 
 -- | Check that the tree exists and if it can be created
 checkTree :: FilePath -> Bool -> IO ()
-checkTree path allowed
-  | allowed = mktree $ dirpath >> stdout ("Created directory: " ++ dirpath)
+checkTree path canMake
+  | canMake = mktree $ dirpath >> stdout ("Created directory: " ++ dirpath)
   | testdir dirpath = stdout $ dirpath ++ " already exists"
   | otherwise = ioError $ "Directory " ++ dirpath ++ " does not exist!"
   where dirpath = directory path
@@ -67,15 +67,14 @@ checkTree path allowed
 -- | symlink, this exception should !not! disrupt the execution of the
 -- | remainder of the symlinks.
 buildLink :: FilePath -> LinkConfig -> IO ()
-buildLink trg (LinkConfig {create = c, path = src, relink = rln, force = f, relative = rel})
-  -- (not rln) && (doesPathExist trg) && (pathIsSymbolicLink) = -- Print link already exist
-  -- (not f) && (doesPathExist trg) = -- Return IO error
-  | otherwise = do
+buildLink pth LinkConfig {create = c, path = src, relink = rln, force = f,
+                           relative = rel}
+  =  do
     -- Check that dirtree exits
     checkTree trg c
     -- Handle existing files
-    if f then cleanTargetFile trg else cleanTargetLink trg rln
-    symlink $ src trg 
+    cleanTarget f rln pth
+    symlink $ src pth
 
 -- | Parse config file into Config object
 parseConfig :: String -> IO Config
