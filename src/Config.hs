@@ -37,27 +37,29 @@ instance FromJSON Config
 -- | Clean target symlink if needed
 cleanTargetLink :: FilePath -> IO ()
 cleanTargetLink pth
-  | testfile pth && isNotSymbolicLink pth =  ioError $ format ("File already exists at:"%s%"!") dirpath
-  | rm pth >> printf ("Removing existing symlink: "%s%) pth
-  | otherwise = printf ("Target "%s%" is already clean.") pth
+  | tstpth && isNotSymbolicLink pth = ioError (
+      format ("File already exists at:"%fp%"!\n") pth)
+  | tstpth = rm pth >> printf ("Removing existing symlink: "%fp%"\n") pth
+  | otherwise = printf ("Target "%fp%" is already clean.\n") pth
+  where tstpth = testfile pth
 
 -- | Clean target file if needed
 cleanTargetFile :: FilePath -> IO ()
 cleanTargetFile pth
-  | testfile pth = rm pth >> printf ("Removing existing file: "%s%) pth
-  | otherwise = printf ("Target "%s%" is clean.") pth
+  | testfile pth = rm pth >> printf ("Removing existing file: "%fp%"\n") pth
+  | otherwise = printf ("Target "%fp%" is clean.\n") pth
 
 cleanTarget :: Bool -> Bool -> FilePath -> IO ()
 cleanTarget True _ pth = cleanTargetFile pth
 cleanTarget _ True pth = cleanTargetLink pth
-cleanTarget _ _ pth    = printf ("Assuming target path is clean: "%s%) pth
+cleanTarget _ _ pth    = printf ("Assuming target path is clean: "%fp%"\n") pth
 
 -- | Check that the tree exists and if it can be created
 checkTree :: FilePath -> Bool -> IO ()
 checkTree pth canMake
-  | canMake = mktree $ dirpath >> printf ("Created directory: "%s%) dirpath
-  | testdir dirpath = printf (s%" already exists!\n") pth
-  | otherwise = ioError $ format ("Directory "%s%" does not exist!") dirpath
+  | canMake = mktree dirpath >> printf ("Created directory: "%fp%"\n") dirpath
+  | testdir dirpath = printf (fp%" already exists!\n") pth
+  | otherwise = ioError $ format ("Directory "%fp%" does not exist!\n") dirpath
   where dirpath = dropExtension pth
 
 -- NOTE: symlink fails if the file already exists
