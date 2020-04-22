@@ -37,27 +37,28 @@ instance FromJSON Config
 -- | Clean target symlink if needed
 cleanTargetLink :: FilePath -> IO ()
 cleanTargetLink pth
-  | isSymbolicLink pth = rm pth >> stdout ("Removing existing symlink: " ++ pth)
-  | otherwise = stdout ("Target " ++ pth ++ " is already clean.")
+  | testfile pth && isNotSymbolicLink pth =  ioError $ format ("File already exists at:"%s%"!") dirpath
+  | rm pth >> printf ("Removing existing symlink: "%s%) pth
+  | otherwise = printf ("Target "%s%" is already clean.") pth
 
 -- | Clean target file if needed
 cleanTargetFile :: FilePath -> IO ()
 cleanTargetFile pth
-  | testfile pth = rm pth >> stdout ("Removing existing file: " ++ pth)
-  | otherwise = stdout ("Target " ++ pth ++ " is clean.")
+  | testfile pth = rm pth >> printf ("Removing existing file: "%s%) pth
+  | otherwise = printf ("Target "%s%" is clean.") pth
 
 cleanTarget :: Bool -> Bool -> FilePath -> IO ()
 cleanTarget True _ pth = cleanTargetFile pth
 cleanTarget _ True pth = cleanTargetLink pth
-cleanTarget _ _ pth    = stdout ("Assuming target path is clean: " ++ pth)
+cleanTarget _ _ pth    = printf ("Assuming target path is clean: "%s%) pth
 
 -- | Check that the tree exists and if it can be created
 checkTree :: FilePath -> Bool -> IO ()
-checkTree path canMake
-  | canMake = mktree $ dirpath >> stdout ("Created directory: " ++ dirpath)
-  | testdir dirpath = stdout $ dirpath ++ " already exists"
-  | otherwise = ioError $ "Directory " ++ dirpath ++ " does not exist!"
-  where dirpath = directory path
+checkTree pth canMake
+  | canMake = mktree $ dirpath >> printf ("Created directory: "%s%) dirpath
+  | testdir dirpath = printf (s%" already exists!\n") pth
+  | otherwise = ioError $ format ("Directory "%s%" does not exist!") dirpath
+  where dirpath = dropExtension pth
 
 -- NOTE: symlink fails if the file already exists
 
@@ -71,10 +72,10 @@ buildLink pth LinkConfig {create = c, path = src, relink = rln, force = f,
                            relative = rel}
   =  do
     -- Check that dirtree exits
-    checkTree trg c
+    checkTree pth c
     -- Handle existing files
     cleanTarget f rln pth
-    symlink $ src pth
+    symlink src pth
 
 -- | Parse config file into Config object
 parseConfig :: String -> IO Config
