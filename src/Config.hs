@@ -5,6 +5,7 @@
 module Config (parseConfig) where
 
 import qualified Data.Yaml as Y
+import qualified Data.Text as T
 import Data.Yaml (FromJSON(..))
 import Data.HashMap.Strict as HM
 import GHC.Generics
@@ -42,8 +43,7 @@ cleanTargetLink pth = do
     then
       isNotSymbolicLink pth >>= \isLn -> if isLn
         then
-          ioError (
-            format ("File already exists at:"%fp%"!\n") pth)
+          error . T.unpack $ format ("File already exists at:"%fp%"\n") pth
         else
           rm pth >> printf ("Removing existing symlink: "%fp%"\n") pth
     else
@@ -63,16 +63,16 @@ cleanTarget _ True pth = cleanTargetLink pth
 -- and raise an error if the dirtree does not exist
 cleanTarget _ _ pth    = testfile pth >>= \exists ->
   if exists
-     then ioError $ format ("Filepath is not clean!\n"%fp%" already exists!\n") pth
+     then error . T.unpack $ format ("Filepath is not clean!\n"%fp%" already exists!\n") pth
      else printf ("Path is clean: "%fp%"\n") pth
 
 -- | Check that the tree exists and if it can be created
 checkTree :: FilePath -> Bool -> IO ()
-checkTree pth canMake
-    | canMake = mktree dirpath >> printf ("Created directory: "%fp%"\n") dirpath
-    | testdir dirpath = printf (fp%" already exists!\n") pth
-    | otherwise = ioError $ format ("Directory "%fp%" does not exist!\n") dirpath
-  where dirpath = dropExtension pth
+checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
+checkTree pth _ = testdir pth >>= \dirExists ->
+      if dirExists
+         then printf (fp%" already exists\n") pth
+         else error . T.unpack $ format ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
 
@@ -86,7 +86,7 @@ buildLink pth LinkConfig {
               , relink = rln
               , force = f
               , relative = rel }
-    = checkTree pth c
+    = checkTree (dropExtension pth) c
     >> cleanTarget f rln pth
     >> symlink src pth
 
