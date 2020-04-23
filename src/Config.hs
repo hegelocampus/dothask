@@ -35,6 +35,10 @@ instance FromJSON Config
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
+-- | Create error message from Text
+raiseError :: Format Text a -> error
+raiseError = error . T.unpack . format
+
 -- | Clean target symlink if needed
 cleanTargetLink :: FilePath -> IO ()
 cleanTargetLink pth = do
@@ -43,7 +47,7 @@ cleanTargetLink pth = do
     then
       isNotSymbolicLink pth >>= \isLn -> if isLn
         then
-          error . T.unpack $ format ("File already exists at:"%fp%"\n") pth
+          raiseError $ ("File already exists at: "%fp%"\n") pth
         else
           rm pth >> printf ("Removing existing symlink: "%fp%"\n") pth
     else
@@ -63,7 +67,7 @@ cleanTarget _ True pth = cleanTargetLink pth
 -- and raise an error if the dirtree does not exist
 cleanTarget _ _ pth    = testfile pth >>= \exists ->
   if exists
-     then error . T.unpack $ format ("Filepath is not clean!\n"%fp%" already exists!\n") pth
+     then raiseError $ ("Filepath is not clean!\n"%fp%" already exists!\n") pth
      else printf ("Path is clean: "%fp%"\n") pth
 
 -- | Check that the tree exists and if it can be created
@@ -72,7 +76,7 @@ checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
 checkTree pth _ = testdir pth >>= \dirExists ->
       if dirExists
          then printf (fp%" already exists\n") pth
-         else error . T.unpack $ format ("Directory "%fp%" does not exist!\n") pth
+         else raiseError $ ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
 
