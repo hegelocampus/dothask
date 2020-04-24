@@ -4,19 +4,8 @@
 module Config
     (
       parseConfig
-    , LinkConfig
-        (
-          create
-        , path
-        , relink
-        , force
-        , relative
-        )
-    , Config
-        (
-          defaults
-        , link
-        )
+    , LinkConfig (..)
+    , Config (..)
     ) where
 
 -- TODO: Move most of this function into the dothask.hs file, all that should
@@ -29,24 +18,23 @@ import qualified Data.Yaml as Y
 --import Data.Yaml (FromJSON(..))
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics
+import qualified Turtle (FilePath) as T
 
 data LinkConfig = LinkConfig
-  {
-    create   :: !Bool      -- ^ Create parent directories up to target (default: null)
-  , path     :: !FilePath  -- ^ The source of the symlink (default: false)
-  , relink   :: !Bool      -- ^ Remove target if it is a symlink (default: false)
-  , force    :: !Bool      -- ^ Force removal of target (default: false)
-  , relative :: !Bool      -- ^ Use relative path to source (default: false)
-  } deriving stock (Generic, Show)
+    { create   :: !Bool      -- ^ Create parent directories up to target (default: null)
+    , path     :: !FilePath  -- ^ The source of the symlink (default: false)
+    , relink   :: !Bool      -- ^ Remove target if it is a symlink (default: false)
+    , force    :: !Bool      -- ^ Force removal of target (default: false)
+    , relative :: !Bool      -- ^ Use relative path to source (default: false)
+    } deriving stock (Generic, Show)
 
 instance Y.FromJSON LinkConfig
 
 -- TODOMAYBE: Move type definitions to their own files to facilitate use
 data Config = Config
-  {
-    defaults  :: !Y.Object
-  , link      :: !(HM.HashMap FilePath (Maybe LinkConfig))
-  } deriving stock (Generic, Show)
+    { defaults  :: !Y.Object                                 -- ^ Global config
+    , link      :: !(HM.HashMap FilePath (Maybe LinkConfig)) -- ^ Link configuration
+    } deriving stock (Generic, Show)
 
 instance Y.FromJSON Config
 
