@@ -8,20 +8,20 @@ Dotfile setup automation written in Haskell
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dothask (buildDots) where
+module Dothask (buildDots, buildLink) where
 
 import qualified Data.Text as T
-import Data.Yaml ((.:))
+--import Data.Yaml ((.:))
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
 
-import Config (parseConfig, LinkConfig (..), Config (..))
+import Config (parseConfig, LinkConfig (..), ConfigObj (..))
 
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
 -- | Create error message from Format.
---raiseErrorF :: Format Text r -> b
+raiseErrorF :: Format Text (a -> Text) -> a -> c
 raiseErrorF txt = error . T.unpack . format txt
 
 -- | Clean target symlink if needed.
@@ -64,15 +64,15 @@ buildLink pth LinkConfig
     { create = c
     , path = src
     , relink = rln
-    , force = f
+    , force = frc
     , relative = rel
     }
     = checkTree (dropExtension pth) c >>
-      cleanTarget f rln pth >>
+      cleanTarget frc rln pth >>
       symlink (fromString src) pth
 
 buildDots :: String -> Bool -> IO ()
-buildDots configPath isQuiet = do
-  res <- parseConfig configPath
-  print res
+buildDots configPath _ =
+  parseConfig configPath >>= \ConfigObj { defaults = def, link = ln } ->
+    print ln
 
