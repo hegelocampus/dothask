@@ -6,14 +6,19 @@ module Config
       parseConfig
     , LinkConfig (..)
     , ConfigObj (..)
+    , StrictLink (..)
     ) where
 
 import qualified Data.Yaml as Y
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics
 
-newtype DefaultsConfig = DefaultsConfig
-    { linkConfig :: !LinkConfig } deriving stock (Generic, Show)
+data DefaultsConfig = DefaultsConfig
+    { linkConfig   :: !LinkConfig
+    , createConfig :: !(Maybe Y.Object)
+    } deriving stock (Generic, Show)
+
+instance Y.FromJSON DefaultsConfig
 
 data LinkConfig = LinkConfig
     { create   :: !(Maybe Bool)    -- ^ Create parent dirs (default: false)
@@ -21,15 +26,29 @@ data LinkConfig = LinkConfig
     , relink   :: !(Maybe Bool)    -- ^ Remove target symlink (default: false)
     , force    :: !(Maybe Bool)    -- ^ Force removal of target (default: false)
     , relative :: !(Maybe Bool)    -- ^ Relative path to source (default: false)
-    } deriving stock (Generic, Show)
+    } deriving stock (Generic, Show, HM.HashMap)
 
 instance Y.FromJSON LinkConfig
+
+-- Combine two Links where values in the first that are Nothing are replaced
+-- with the value in the second.
+-- Uses Data.HashMap.Strict.unionWith.
+union :: LinkConfig -> LinkConfig -> LinkConfig
+union = HM.unionWith clearLNothings
+    where clearLNothings val1 val2 = if isJust val1 then val1 else val2
+
+data StrictLink = StrictLink
+    { createCfg   :: !Bool    -- ^ Create parent dirs (default: false)
+    , pathCfg     :: !String  -- ^ The source of the link (default: false)
+    , relinkCfg   :: !Bool    -- ^ Remove target symlink (default: false)
+    , forceCfg    :: !Bool    -- ^ Force removal of target (default: false)
+    , relativeCfg :: !Bool    -- ^ Relative path to source (default: false)
+    } deriving stock (Generic, Show)
 
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
     -- Order of operations
-    , link     :: !(HM.HashMap
-                      FilePath Maybe (Either String LinkConfig))  -- ^ Link configuration
+    , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON ConfigObj

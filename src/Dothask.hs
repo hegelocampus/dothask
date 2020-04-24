@@ -33,6 +33,8 @@ cleanTargetLink pth = testfile pth >>= \tstpth -> if tstpth
     else printf ("Target "%fp%" is already clean.\n") pth
 
 -- | Clean target file if needed.
+-- TODO: Add printline that asks user to confirm that they want to delete the
+-- existing file
 cleanTargetFile :: FilePath -> IO ()
 cleanTargetFile pth = testfile pth >>= \exists -> if exists
     then rm pth >> printf ("Removing existing file: "%fp%"\n") pth
@@ -67,12 +69,28 @@ buildLink pth LinkConfig
     , force = frc
     , relative = rel
     }
-    = checkTree (dropExtension pth) c >>
+    = maybe False (checkTree (dropExtension pth)) c >>
       cleanTarget frc rln pth >>
       symlink (fromString src) pth
 
+-- | Fill the default values for the LinkConfig object based on the set config
+-- values if avaliable, otherwise use default values.
+-- TODOMAYBE: Implement (++) function for LinkConfig Objects that retains the
+-- left value for each field.
+setDefaults :: LinkConfig -> LinkConfig -> StrictLink
+setDefaults lnk cfgLnk = lnk `union` cfgLnk
+setDefaults _ _ = StrictLink
+    { createCfg = False
+    , pathCfg   = False
+    , relinkCfg = False
+    , forceCfg  = False
+    , relativeCfg = False
+    }
+
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
-  parseConfig configPath >>= \ConfigObj { defaults = def, link = ln } ->
-    print ln
+  parseConfig configPath >>= \ConfigObj { defaults = dflts, link = lnks } ->
+    -- TODO: create defaults and pass buildLink a coerced defaults object
+    --mapM_ (buildLink $ linkConfig dflts) lnks
+    print lnks
 
