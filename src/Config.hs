@@ -5,7 +5,7 @@ module Config
     (
       parseConfig
     , LinkConfig (..)
-    , Config (..)
+    , ConfigObj (..)
     ) where
 
 -- TODO: Move most of this function into the dothask.hs file, all that should
@@ -30,15 +30,14 @@ data LinkConfig = LinkConfig
 instance Y.FromJSON LinkConfig
 
 -- TODOMAYBE: Move type definitions to their own files to facilitate use
-data Config = Config
+data ConfigObj = ConfigObj
     { defaults  :: !Y.Object                                 -- ^ Global config
     , link      :: !(HM.HashMap FilePath (Maybe LinkConfig)) -- ^ Link configuration
     } deriving stock (Generic, Show)
 
-instance Y.FromJSON Config
-
+instance Y.FromJSON ConfigObj
 
 -- | Parse config file into Config object
-parseConfig :: String -> IO Config
-parseConfig p = Y.decodeFileThrow p >>= \res -> return (res :: Config)
+parseConfig :: String -> IO ConfigObj
+parseConfig p = Y.decodeFileThrow p >>= \res -> return (res :: ConfigObj)
 
