@@ -8,14 +8,7 @@ module Config
     , ConfigObj (..)
     ) where
 
--- TODO: Move most of this function into the dothask.hs file, all that should
--- be happening here is the initiall Parsing of the config and setting of
--- default values
--- Can then import the LinkConfig and Config types into the main file for meat
--- and potatoes actions
-
 import qualified Data.Yaml as Y
---import Data.Yaml (FromJSON(..))
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics
 
@@ -32,15 +25,16 @@ data LinkConfig = LinkConfig
 
 instance Y.FromJSON LinkConfig
 
--- TODOMAYBE: Move type definitions to their own files to facilitate use
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
+    -- Order of operations
     , link     :: !(HM.HashMap
                       FilePath Maybe (Either String LinkConfig))  -- ^ Link configuration
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON ConfigObj
 
+-- TODO: Parse DefaultsConfig object to fill missing values with defaults
 -- | Parse config file into Config object
 parseConfig :: String -> IO ConfigObj
 parseConfig p = Y.decodeFileThrow p >>= \res -> return (res :: ConfigObj)
