@@ -1,12 +1,12 @@
 defaults:
-  link:
+  linkConfig:
     create: true
     force: true
 link:
   ~/.profile:
-  ~/.bash_profile:
+  ~/.vimrc:
+    path: vim/vimrc
   ~/.bashrc:
-  ~/.bashbee:
   ~/.bash_logout:
   ~/.gitconfig:
   ~/.Xmodmap:

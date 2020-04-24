@@ -19,20 +19,24 @@ import qualified Data.Yaml as Y
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics
 
+newtype DefaultsConfig = DefaultsConfig
+    { linkConfig :: !LinkConfig } deriving stock (Generic, Show)
+
 data LinkConfig = LinkConfig
-    { create   :: !Bool    -- ^ Create parent directories up to target (default: null)
-    , path     :: !String  -- ^ The source of the symlink (default: false)
-    , relink   :: !Bool    -- ^ Remove target if it is a symlink (default: false)
-    , force    :: !Bool    -- ^ Force removal of target (default: false)
-    , relative :: !Bool    -- ^ Use relative path to source (default: false)
+    { create   :: !(Maybe Bool)    -- ^ Create parent dirs (default: false)
+    , path     :: !(Maybe String)  -- ^ The source of the link (default: false)
+    , relink   :: !(Maybe Bool)    -- ^ Remove target symlink (default: false)
+    , force    :: !(Maybe Bool)    -- ^ Force removal of target (default: false)
+    , relative :: !(Maybe Bool)    -- ^ Relative path to source (default: false)
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON LinkConfig
 
 -- TODOMAYBE: Move type definitions to their own files to facilitate use
 data ConfigObj = ConfigObj
-    { defaults  :: !Y.Object                                 -- ^ Global config
-    , link      :: !(HM.HashMap FilePath (Maybe LinkConfig)) -- ^ Link configuration
+    { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
+    , link     :: !(HM.HashMap
+                      FilePath Maybe (Either String LinkConfig))  -- ^ Link configuration
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON ConfigObj
