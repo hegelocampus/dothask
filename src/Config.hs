@@ -4,13 +4,19 @@
 
 module Config (parseConfig) where
 
-import qualified Data.Yaml as Y
-import qualified Data.Text as T
-import Data.Yaml (FromJSON(..))
-import Data.HashMap.Strict as HM
-import GHC.Generics
+-- TODO: Move most of this function into the dothask.hs file, all that should
+-- be happening here is the initiall Parsing of the config and setting of
+-- default values
+-- Can then import the LinkConfig and Config types into the main file for meat
+-- and potatoes actions
+
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
+import qualified Data.Yaml as Y
+import qualified Data.Text as T
+--import Data.Yaml (FromJSON(..))
+import Data.HashMap.Strict as HM
+import GHC.Generics
 
 data LinkConfig =
   LinkConfig {
@@ -21,7 +27,7 @@ data LinkConfig =
   , relative :: Bool -- Use relative path to the source (default: false, absolute links)
   } deriving (Generic, Show)
 
-instance FromJSON LinkConfig
+instance Y.FromJSON LinkConfig
 
 -- TODOMAYBE: Move type definitions to their own files to facilitate use
 data Config =
@@ -30,14 +36,14 @@ data Config =
   , link      :: HM.HashMap FilePath (Maybe LinkConfig)
   } deriving (Generic, Show)
 
-instance FromJSON Config
+instance Y.FromJSON Config
 
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
 
 -- | Create error message from Text
-raiseError :: Format Text a -> error
-raiseError = error . T.unpack . format
+--raiseErrorF :: Format Text r -> b
+raiseErrorF txt = error . T.unpack . format txt
 
 -- | Clean target symlink if needed
 cleanTargetLink :: FilePath -> IO ()
@@ -47,9 +53,9 @@ cleanTargetLink pth = do
     then
       isNotSymbolicLink pth >>= \isLn -> if isLn
         then
-          raiseError $ ("File already exists at: "%fp%"\n") pth
+          raiseErrorF ("File already exists at: " % fp % "\n") pth
         else
-          rm pth >> printf ("Removing existing symlink: "%fp%"\n") pth
+          rm pth >> printf ("Removing existing symlink: " % fp % "\n") pth
     else
       printf ("Target "%fp%" is already clean.\n") pth
 
@@ -67,7 +73,7 @@ cleanTarget _ True pth = cleanTargetLink pth
 -- and raise an error if the dirtree does not exist
 cleanTarget _ _ pth    = testfile pth >>= \exists ->
   if exists
-     then raiseError $ ("Filepath is not clean!\n"%fp%" already exists!\n") pth
+     then raiseErrorF ("Filepath is not clean!\n"%fp%" already exists!\n") pth
      else printf ("Path is clean: "%fp%"\n") pth
 
 -- | Check that the tree exists and if it can be created
@@ -76,7 +82,7 @@ checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
 checkTree pth _ = testdir pth >>= \dirExists ->
       if dirExists
          then printf (fp%" already exists\n") pth
-         else raiseError $ ("Directory "%fp%" does not exist!\n") pth
+         else raiseErrorF ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
 
