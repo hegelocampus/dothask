@@ -18,14 +18,13 @@ import qualified Data.Yaml as Y
 --import Data.Yaml (FromJSON(..))
 import qualified Data.HashMap.Strict as HM
 import GHC.Generics
-import qualified Turtle (FilePath) as T
 
 data LinkConfig = LinkConfig
-    { create   :: !Bool      -- ^ Create parent directories up to target (default: null)
-    , path     :: !FilePath  -- ^ The source of the symlink (default: false)
-    , relink   :: !Bool      -- ^ Remove target if it is a symlink (default: false)
-    , force    :: !Bool      -- ^ Force removal of target (default: false)
-    , relative :: !Bool      -- ^ Use relative path to source (default: false)
+    { create   :: !Bool    -- ^ Create parent directories up to target (default: null)
+    , path     :: !String  -- ^ The source of the symlink (default: false)
+    , relink   :: !Bool    -- ^ Remove target if it is a symlink (default: false)
+    , force    :: !Bool    -- ^ Force removal of target (default: false)
+    , relative :: !Bool    -- ^ Use relative path to source (default: false)
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON LinkConfig
