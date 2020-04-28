@@ -82,14 +82,13 @@ buildLink pth StrictLink
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
--- TODOMAYBE: Implement (++) function for LinkConfig Objects that retains the
--- left value for each field.
 setDefaults :: LinkConfig -> LinkConfig -> StrictLink
 setDefaults = removeMaybes . weightedUnion
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
   parseConfig configPath >>= \ConfigObj { defaults = dflts, link = lnks } ->
-    -- TODO: create defaults and pass buildLink a coerced defaults object
+    -- Pass buildLink a pure StrictLink recond created from Link,
+    -- Config settings, and defaults
     mapM_ (buildLink $ setDefaults dflts) lnks
 
