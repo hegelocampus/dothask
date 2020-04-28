@@ -69,14 +69,14 @@ checkTree pth _ = testdir pth >>= \dirExists -> if dirExists
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
 buildLink :: FilePath -> StrictLink -> IO ()
-buildLink pth LinkConfig
-    { createCfg = c
-    , pathCfg = src
-    , relinkCfg = rln
-    , forceCfg = frc
-    , relativeCfg = rel
+buildLink pth StrictLink
+    { create = c
+    , path = src
+    , relink = rln
+    , force = frc
+    , relative = rel
     }
-    = maybe False (checkTree (dropExtension pth)) c >>
+    = checkTree (dropExtension pth) c >>
       cleanTarget frc rln pth >>
       symlink (fromString src) pth
 
@@ -85,12 +85,11 @@ buildLink pth LinkConfig
 -- TODOMAYBE: Implement (++) function for LinkConfig Objects that retains the
 -- left value for each field.
 setDefaults :: LinkConfig -> LinkConfig -> StrictLink
-setDefaults lnk cfgLnk = removeMaybes $ lnk `weightedUnion` cfgLnk
+setDefaults = removeMaybes . weightedUnion
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
   parseConfig configPath >>= \ConfigObj { defaults = dflts, link = lnks } ->
     -- TODO: create defaults and pass buildLink a coerced defaults object
-    --mapM_ (buildLink $ linkConfig dflts) lnks
-    print lnks
+    mapM_ (buildLink $ setDefaults dflts) lnks
 
