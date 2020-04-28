@@ -33,11 +33,11 @@ instance Y.FromJSON LinkConfig
 -- | Combine two Links where values in the first that are Nothing are replaced
 -- with the value in the second.
 -- Uses Data.HashMap.Strict.unionWith.
-union :: LinkConfig -> LinkConfig -> LinkConfig
-union (c, p, r, f, rel) (c2, p2, r2, f2, rel) = HM.unionWith clearLNothings
+union :: Y.Object -> Y.Object -> LinkConfig
+union = HM.unionWith clearLNothings
     where clearLNothings x y = if isJust x then x else y
 
-unionS :: LinkConfig -> StrictLink -> StrictLink
+unionS :: Y.Object -> StrictLink -> StrictLink
 unionS = HM.unionWith setPure
     where setPure cv sv = fromMaybe sv cv
 
@@ -53,7 +53,7 @@ data StrictLink = StrictLink
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
     -- Order of operations
-    , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
+    , link     :: !(HM.HashMap FilePath (Maybe (Either String Y.Object)))  -- ^ Link configuration
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON ConfigObj
