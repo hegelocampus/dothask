@@ -2,8 +2,9 @@
 {-# LANGUAGE DerivingStrategies #-}
 
 module Config
-    (
-      parseConfig
+    ( parseConfig
+    , removeMaybes
+    , weightedUnion
     , LinkConfig (..)
     , ConfigObj (..)
     , StrictLink (..)

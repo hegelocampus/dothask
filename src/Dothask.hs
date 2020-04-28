@@ -15,7 +15,14 @@ import qualified Data.Text as T
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
 
-import Config (parseConfig, LinkConfig (..), ConfigObj (..))
+import Config
+    ( parseConfig
+    , removeMaybes
+    , weightedUnion
+    , LinkConfig (..)
+    , ConfigObj (..)
+    , StrictLink (..)
+    )
 
 -- TODO: Create setDefaults function
 -- setDefaults should use Data.Yaml (.!=) to set missing default values
@@ -61,13 +68,13 @@ checkTree pth _ = testdir pth >>= \dirExists -> if dirExists
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
-buildLink :: FilePath -> LinkConfig -> IO ()
+buildLink :: FilePath -> StrictLink -> IO ()
 buildLink pth LinkConfig
-    { create = c
-    , path = src
-    , relink = rln
-    , force = frc
-    , relative = rel
+    { createCfg = c
+    , pathCfg = src
+    , relinkCfg = rln
+    , forceCfg = frc
+    , relativeCfg = rel
     }
     = maybe False (checkTree (dropExtension pth)) c >>
       cleanTarget frc rln pth >>
@@ -78,14 +85,7 @@ buildLink pth LinkConfig
 -- TODOMAYBE: Implement (++) function for LinkConfig Objects that retains the
 -- left value for each field.
 setDefaults :: LinkConfig -> LinkConfig -> StrictLink
-setDefaults lnk cfgLnk = lnk `union` cfgLnk
-setDefaults _ _ = StrictLink
-    { createCfg = False
-    , pathCfg   = False
-    , relinkCfg = False
-    , forceCfg  = False
-    , relativeCfg = False
-    }
+setDefaults lnk cfgLnk = removeMaybes $ lnk `weightedUnion` cfgLnk
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
