@@ -11,6 +11,7 @@ module Config
 
 import qualified Data.Yaml as Y
 import qualified Data.HashMap.Strict as HM
+import Data.Maybe
 import GHC.Generics
 
 data DefaultsConfig = DefaultsConfig
@@ -33,8 +34,8 @@ instance Y.FromJSON LinkConfig
 -- | Combine two Links where values in the first that are Nothing are replaced
 -- with the value in the second.
 -- Uses Data.HashMap.Strict.unionWith.
-union :: Y.Object -> Y.Object -> LinkConfig
-union = HM.unionWith clearLNothings
+--weightedUnion :: HM.HashMap a Maybe b -> HM.HashMap a c -> HM.HashMap
+weightedUnion = HM.unionWith clearLNothings
     where clearLNothings x y = if isJust x then x else y
 
 unionS :: Y.Object -> StrictLink -> StrictLink
