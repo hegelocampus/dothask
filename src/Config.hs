@@ -43,7 +43,7 @@ data StrictLink = StrictLink
 
 -- | TODO Set defaults to be Maybe DefaultsConfig.
 data ConfigObj = ConfigObj
-    { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
+    { defaults :: !DefaultsConfig                                            -- ^ Defaults config object
     -- Order of operations
     , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
     } deriving stock (Generic, Show)
