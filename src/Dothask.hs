@@ -12,13 +12,17 @@ module Dothask (buildDots, buildLink) where
 
 import qualified Data.Text as T
 --import Data.Yaml ((.:))
+import qualified Data.HashMap.Strict as HM
+import Data.Maybe
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
 
 import Config
     ( parseConfig
     , removeMaybes
+    , buildLink
     , weightedUnion
+    , MaybeLinkCfg
     , DefaultsConfig (..)
     , LinkConfig (..)
     , ConfigObj (..)
@@ -70,8 +74,8 @@ checkTree pth _ = testdir pth >>= \exists -> if exists
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
-buildLink :: FilePath -> StrictLink -> IO ()
-buildLink pth StrictLink
+makeLink :: FilePath -> StrictLink -> IO ()
+makeLink pth StrictLink
     { create = c
     , path = src
     , relink = rln
@@ -84,15 +88,16 @@ buildLink pth StrictLink
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
-setDefaults :: LinkConfig -> LinkConfig -> StrictLink
+setDefaults :: LinkConfig -> MaybeLinkCfg -> StrictLink
 setDefaults cfg lnk
-    | isJust lnk = removeMaybes . either buildLink (weightedUnion cfg) (fromJust lnk)
-    | otherwise = removeMaybes $ weightedUnion (buildLink "") cfg
+    | isJust lnk = removeMaybes $ either buildLink unionWCfg (fromJust lnk)
+    | otherwise = removeMaybes . unionWCfg $ buildLink ""
+  where unionWCfg x = weightedUnion x cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
   parseConfig configPath >>= \ConfigObj { defaults = cfg, link = lnks } ->
-    -- Pass buildLink a pure StrictLink recond created from Link,
+    -- Pass makeLink a pure StrictLink recond created from Link,
     -- Config settings, and defaults
-    mapM_ (buildLink . setDefaults . (linkConfig cfg)) lnks
+    mapM_ (\(trg, lnk) -> makeLink trg . setDefaults $ linkConfig cfg lnk) HM.toList lnks
 
