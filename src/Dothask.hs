@@ -41,7 +41,8 @@ cleanTargetLink pth = testfile pth >>= \tstpth -> if tstpth
 
 -- | Clean target file if needed.
 -- TODO: Add printline that asks user to confirm that they want to delete the
--- existing file
+-- existing file. It would probably be most clear to deligate this task to
+-- a helper funciton.
 cleanTargetFile :: FilePath -> IO ()
 cleanTargetFile pth = testfile pth >>= \exists -> if exists
     then rm pth >> printf ("Removing existing file: "%fp%"\n") pth
@@ -58,7 +59,7 @@ cleanTarget _ _ pth    = testfile pth >>= \exists -> if exists
 -- | Check that the tree exists and if it can be created.
 checkTree :: FilePath -> Bool -> IO ()
 checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
-checkTree pth _ = testdir pth >>= \dirExists -> if dirExists
+checkTree pth _ = testdir pth >>= \exists -> if exists
     then printf (fp%" already exists\n") pth
     else raiseErrorF ("Directory "%fp%" does not exist!\n") pth
 
