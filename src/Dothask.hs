@@ -85,12 +85,14 @@ buildLink pth StrictLink
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
 setDefaults :: LinkConfig -> LinkConfig -> StrictLink
-setDefaults cfg lnk = removeMaybes . weightedUnion lnk cfg
+setDefaults cfg lnk
+    | isJust lnk = removeMaybes . either buildLink (weightedUnion cfg) (fromJust lnk)
+    | otherwise = removeMaybes $ weightedUnion (buildLink "") cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
   parseConfig configPath >>= \ConfigObj { defaults = cfg, link = lnks } ->
     -- Pass buildLink a pure StrictLink recond created from Link,
     -- Config settings, and defaults
-    mapM_ (buildLink . setDefaults . linkConfig cfg) lnks
+    mapM_ (buildLink . setDefaults . (linkConfig cfg)) lnks
 
