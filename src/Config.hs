@@ -2,12 +2,18 @@
 {-# LANGUAGE DerivingStrategies #-}
 
 module Config
-    ( parseConfig
+    (
+      -- * Utility functions for dealing with config records
+      parseConfig
+    , buildLink
     , removeMaybes
     , weightedUnion
+    -- * Config file records
+    , ConfigObj (..)
     , DefaultsConfig (..)
     , LinkConfig (..)
-    , ConfigObj (..)
+    , MaybeLinkCfg
+    -- * Strict Link with no Maybe values
     , StrictLink (..)
     ) where
 
@@ -15,6 +21,15 @@ import qualified Data.Yaml as Y
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe
 import GHC.Generics
+
+-- | TODO Set defaults to be Maybe DefaultsConfig.
+data ConfigObj = ConfigObj
+    { defaults :: !DefaultsConfig                                            -- ^ Defaults config object
+    -- Order of operations
+    , link     :: !(HM.HashMap FilePath MaybeLinkCfg)  -- ^ Link configuration
+    } deriving stock (Generic, Show)
+
+instance Y.FromJSON ConfigObj
 
 data DefaultsConfig = DefaultsConfig
     { linkConfig   :: !LinkConfig
@@ -33,6 +48,8 @@ data LinkConfig = LinkConfig
 
 instance Y.FromJSON LinkConfig
 
+type MaybeLinkCfg = Maybe (Either String LinkConfig)
+
 data StrictLink = StrictLink
     { create   :: !Bool    -- ^ Create parent dirs (default: false)
     , path     :: !String  -- ^ The source of the link (default: false)
@@ -41,25 +58,16 @@ data StrictLink = StrictLink
     , relative :: !Bool    -- ^ Relative path to source (default: false)
     } deriving stock (Generic, Show)
 
--- | TODO Set defaults to be Maybe DefaultsConfig.
-data ConfigObj = ConfigObj
-    { defaults :: !DefaultsConfig                                            -- ^ Defaults config object
-    -- Order of operations
-    , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
-    } deriving stock (Generic, Show)
-
-instance Y.FromJSON ConfigObj
-
 -- | Build a link from a string representing the path and a LinkConfig object.
 -- TODOMAYBE: Empty string to create path to "./filename", this could be
 -- implemented in a different way
-buildLink :: String -> LinkConfig
+buildLink :: String -> LinkConfig -> LinkConfig
 buildLink str cfg = LinkConfig
-    { createCfg   = createCfg str
-    , pathCfg     = str
-    , relinkCfg   = relinkCfg str
-    , forceCfg    = forceCfg str
-    , relativeCfg = relativeCfg str
+    { createCfg   = createCfg cfg
+    , pathCfg     = Just str
+    , relinkCfg   = relinkCfg cfg
+    , forceCfg    = forceCfg cfg
+    , relativeCfg = relativeCfg cfg
     }
 
 -- | Combine two Links where values in the first that are Nothing are replaced
