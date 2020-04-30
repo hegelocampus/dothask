@@ -33,6 +33,23 @@ data LinkConfig = LinkConfig
 
 instance Y.FromJSON LinkConfig
 
+data StrictLink = StrictLink
+    { create   :: !Bool    -- ^ Create parent dirs (default: false)
+    , path     :: !String  -- ^ The source of the link (default: false)
+    , relink   :: !Bool    -- ^ Remove target symlink (default: false)
+    , force    :: !Bool    -- ^ Force removal of target (default: false)
+    , relative :: !Bool    -- ^ Relative path to source (default: false)
+    } deriving stock (Generic, Show)
+
+-- | TODO Set defaults to be Maybe DefaultsConfig.
+data ConfigObj = ConfigObj
+    { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
+    -- Order of operations
+    , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
+    } deriving stock (Generic, Show)
+
+instance Y.FromJSON ConfigObj
+
 -- | Combine two Links where values in the first that are Nothing are replaced
 -- with the value in the second.
 -- Uses Data.HashMap.Strict.unionWith.
@@ -54,23 +71,6 @@ removeMaybes x = StrictLink
     , force = fromMaybe False $ forceCfg x
     , relative = fromMaybe False $ relativeCfg x
     }
-
-data StrictLink = StrictLink
-    { create   :: !Bool    -- ^ Create parent dirs (default: false)
-    , path     :: !String  -- ^ The source of the link (default: false)
-    , relink   :: !Bool    -- ^ Remove target symlink (default: false)
-    , force    :: !Bool    -- ^ Force removal of target (default: false)
-    , relative :: !Bool    -- ^ Relative path to source (default: false)
-    } deriving stock (Generic, Show)
-
--- | TODO Set defaults to be Maybe DefaultsConfig.
-data ConfigObj = ConfigObj
-    { defaults :: !DefaultsConfig                                 -- ^ Defaults config object
-    -- Order of operations
-    , link     :: !(HM.HashMap FilePath (Maybe (Either String LinkConfig)))  -- ^ Link configuration
-    } deriving stock (Generic, Show)
-
-instance Y.FromJSON ConfigObj
 
 -- TODO: Parse DefaultsConfig object to fill missing values with defaults
 -- | Parse config file into Config object
