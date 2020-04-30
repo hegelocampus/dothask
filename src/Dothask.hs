@@ -84,20 +84,24 @@ makeLink pth StrictLink
     }
     = checkTree (dropExtension pth) c >>
       cleanTarget frc rln pth >>
-      symlink (fromString src) pth
+      symlink src pth
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
 setDefaults :: LinkConfig -> MaybeLinkCfg -> StrictLink
 setDefaults cfg lnk
-    | isJust lnk = removeMaybes $ either buildLink unionWCfg (fromJust lnk)
-    | otherwise = removeMaybes . unionWCfg $ buildLink ""
-  where unionWCfg x = weightedUnion x cfg
+    | isJust lnk = removeMaybes . either buildWCfg unionCfg $ fromJust lnk
+    | otherwise = removeMaybes $ buildWCfg ""
+  where
+      unionCfg bltLnk = weightedUnion bltLnk cfg
+      buildWCfg src = buildLink src cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
   parseConfig configPath >>= \ConfigObj { defaults = cfg, link = lnks } ->
     -- Pass makeLink a pure StrictLink recond created from Link,
     -- Config settings, and defaults
-    mapM_ (\(trg, lnk) -> makeLink trg . setDefaults $ linkConfig cfg lnk) HM.toList lnks
+    mapM_ (\(trg, lnk) ->
+            makeLink (fromText trg) $ setDefaults (linkConfig cfg) lnk
+        ) $ HM.toList lnks
 
