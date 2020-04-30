@@ -5,6 +5,7 @@ module Config
     ( parseConfig
     , removeMaybes
     , weightedUnion
+    , DefaultsConfig (..)
     , LinkConfig (..)
     , ConfigObj (..)
     , StrictLink (..)
