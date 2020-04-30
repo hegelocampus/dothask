@@ -19,6 +19,7 @@ import Config
     ( parseConfig
     , removeMaybes
     , weightedUnion
+    , DefaultsConfig (..)
     , LinkConfig (..)
     , ConfigObj (..)
     , StrictLink (..)
@@ -84,12 +85,12 @@ buildLink pth StrictLink
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
 setDefaults :: LinkConfig -> LinkConfig -> StrictLink
-setDefaults = removeMaybes . weightedUnion
+setDefaults cfg lnk = removeMaybes . weightedUnion lnk cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
-  parseConfig configPath >>= \ConfigObj { defaults = dflts, link = lnks } ->
+  parseConfig configPath >>= \ConfigObj { defaults = cfg, link = lnks } ->
     -- Pass buildLink a pure StrictLink recond created from Link,
     -- Config settings, and defaults
-    mapM_ (buildLink $ setDefaults dflts) lnks
+    mapM_ (buildLink . setDefaults . linkConfig cfg) lnks
 
