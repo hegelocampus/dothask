@@ -51,6 +51,8 @@ data ConfigObj = ConfigObj
 instance Y.FromJSON ConfigObj
 
 -- | Build a link from a string representing the path and a LinkConfig object.
+-- TODOMAYBE: Empty string to create path to "./filename", this could be
+-- implemented in a different way
 buildLink :: String -> LinkConfig
 buildLink str cfg = LinkConfig
     { createCfg   = createCfg str
