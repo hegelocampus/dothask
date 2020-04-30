@@ -3,7 +3,7 @@ defaults:
     create: true
     force: true
 link:
-  ~/.profile:
+  ~/.profile: profile
   ~/.vimrc:
     path: vim/vimrc
   ~/.bashrc:
