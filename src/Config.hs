@@ -50,16 +50,26 @@ data ConfigObj = ConfigObj
 
 instance Y.FromJSON ConfigObj
 
+-- | Build a link from a string representing the path and a LinkConfig object.
+buildLink :: String -> LinkConfig
+buildLink str cfg = LinkConfig
+    { createCfg   = createCfg str
+    , pathCfg     = str
+    , relinkCfg   = relinkCfg str
+    , forceCfg    = forceCfg str
+    , relativeCfg = relativeCfg str
+    }
+
 -- | Combine two Links where values in the first that are Nothing are replaced
 -- with the value in the second.
 -- Uses Data.HashMap.Strict.unionWith.
 weightedUnion :: LinkConfig -> LinkConfig -> LinkConfig
 weightedUnion x y = LinkConfig
-    { createCfg   = leftIfMaybe (createCfg y) $ createCfg x
-    , pathCfg     = leftIfMaybe (pathCfg y) $ pathCfg x
-    , relinkCfg   = leftIfMaybe (relinkCfg y) $ relinkCfg x
-    , forceCfg    = leftIfMaybe (forceCfg y) $ forceCfg x
-    , relativeCfg = leftIfMaybe (relativeCfg y) $ relativeCfg x
+    { createCfg   = leftIfMaybe (createCfg y) (createCfg x)
+    , pathCfg     = leftIfMaybe (pathCfg y) (pathCfg x)
+    , relinkCfg   = leftIfMaybe (relinkCfg y) (relinkCfg x)
+    , forceCfg    = leftIfMaybe (forceCfg y) (forceCfg x)
+    , relativeCfg = leftIfMaybe (relativeCfg y) (relativeCfg x)
     }
   where leftIfMaybe v1 v2 = if isJust v1 then v1 else v2
 
