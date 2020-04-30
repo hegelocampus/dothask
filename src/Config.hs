@@ -21,12 +21,14 @@ import qualified Data.Yaml as Y
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe
 import GHC.Generics
+import Turtle (Text, FilePath, decodeString)
+import Prelude hiding (FilePath)
 
 -- | TODO Set defaults to be Maybe DefaultsConfig.
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                                            -- ^ Defaults config object
     -- Order of operations
-    , link     :: !(HM.HashMap FilePath MaybeLinkCfg)  -- ^ Link configuration
+    , link     :: !(HM.HashMap Text MaybeLinkCfg)  -- ^ Link configuration
     } deriving stock (Generic, Show)
 
 instance Y.FromJSON ConfigObj
@@ -52,7 +54,7 @@ type MaybeLinkCfg = Maybe (Either String LinkConfig)
 
 data StrictLink = StrictLink
     { create   :: !Bool    -- ^ Create parent dirs (default: false)
-    , path     :: !String  -- ^ The source of the link (default: false)
+    , path     :: !FilePath  -- ^ The source of the link (default: false)
     , relink   :: !Bool    -- ^ Remove target symlink (default: false)
     , force    :: !Bool    -- ^ Force removal of target (default: false)
     , relative :: !Bool    -- ^ Relative path to source (default: false)
@@ -86,7 +88,7 @@ weightedUnion x y = LinkConfig
 removeMaybes :: LinkConfig -> StrictLink
 removeMaybes x = StrictLink
     { create = fromMaybe False $ createCfg x
-    , path = fromMaybe "" $ pathCfg x
+    , path = decodeString . fromMaybe "" $ pathCfg x
     , relink = fromMaybe False $ relinkCfg x
     , force = fromMaybe False $ forceCfg x
     , relative = fromMaybe False $ relativeCfg x
