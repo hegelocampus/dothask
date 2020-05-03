@@ -8,7 +8,7 @@ Dotfile setup automation written in Haskell
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dothask (buildDots, buildLink) where
+module Dothask (buildDots) where
 
 import qualified Data.Text as T
 --import Data.Yaml ((.:))
@@ -17,10 +17,10 @@ import Data.Maybe
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
 
-import Config
+import Dothask.Config
     ( parseConfig
     , removeMaybes
-    , buildLink
+    , buildLinkCfg
     , weightedUnion
     , MaybeLinkCfg
     , DefaultsConfig (..)
@@ -94,7 +94,7 @@ setDefaults cfg lnk
     | otherwise = removeMaybes $ buildWCfg ""
   where
       unionCfg bltLnk = weightedUnion bltLnk cfg
-      buildWCfg src = buildLink src cfg
+      buildWCfg src = buildLinkCfg src cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =

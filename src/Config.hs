@@ -1,11 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
 
-module Config
+module Dothask.Config
     (
       -- * Utility functions for dealing with config records
       parseConfig
-    , buildLink
+    , buildLinkCfg
     , removeMaybes
     , weightedUnion
     -- * Config file records
@@ -63,8 +63,8 @@ data StrictLink = StrictLink
 -- | Build a link from a string representing the path and a LinkConfig object.
 -- TODOMAYBE: Empty string to create path to "./filename", this could be
 -- implemented in a different way
-buildLink :: String -> LinkConfig -> LinkConfig
-buildLink str cfg = LinkConfig
+buildLinkCfg :: String -> LinkConfig -> LinkConfig
+buildLinkCfg str cfg = LinkConfig
     { createCfg   = createCfg cfg
     , pathCfg     = Just str
     , relinkCfg   = relinkCfg cfg
@@ -97,5 +97,5 @@ removeMaybes x = StrictLink
 -- TODO: Parse DefaultsConfig object to fill missing values with defaults
 -- | Parse config file into Config object
 parseConfig :: String -> IO ConfigObj
-parseConfig p = Y.decodeFileThrow p >>= \res -> return (res :: ConfigObj)
+parseConfig pth = return (res :: ConfigObj) =<< Y.decodeFileThrow pth
 
