@@ -1,1 +1,7 @@
 resolver: lts-15.5
+extra-deps:
+  - yaml-0.11.3.0
+  - text-1.2.4.0
+  - turtle-1.5.19
+  - unordered-containers-0.2.10.0
+  - optparse-applicative-0.15.1.0
