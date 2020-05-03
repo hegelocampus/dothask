@@ -5,3 +5,4 @@ extra-deps:
   - turtle-1.5.19
   - unordered-containers-0.2.10.0
   - optparse-applicative-0.15.1.0
+  - hspec
