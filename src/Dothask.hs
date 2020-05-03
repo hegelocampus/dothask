@@ -8,7 +8,10 @@ Dotfile setup automation written in Haskell
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dothask (buildDots) where
+module Dothask (
+      buildDots
+    , module Dothask.Config
+    ) where
 
 import qualified Data.Text as T
 --import Data.Yaml ((.:))

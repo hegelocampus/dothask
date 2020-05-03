@@ -48,6 +48,7 @@ library
   import:              common-options
   hs-source-dirs:      src
   exposed-modules:     Dothask
+                     , Dothask.Config
 
 executable dothask
   import:              common-options

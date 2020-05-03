@@ -97,5 +97,5 @@ removeMaybes x = StrictLink
 -- TODO: Parse DefaultsConfig object to fill missing values with defaults
 -- | Parse config file into Config object
 parseConfig :: String -> IO ConfigObj
-parseConfig pth = return (res :: ConfigObj) =<< Y.decodeFileThrow pth
+parseConfig pth = Y.decodeFileThrow pth >>= \res -> return (res :: ConfigObj)
 
