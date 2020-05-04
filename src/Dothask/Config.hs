@@ -3,18 +3,17 @@
 
 module Dothask.Config
     (
+    -- * Types
+    , ConfigObj (..)
+    , DefaultsConfig (..)
+    , LinkConfig (..)
+    , MaybeLinkCfg
+    , StrictLink (..)
       -- * Utility functions for dealing with config records
       parseConfig
     , buildLinkCfg
     , removeMaybes
     , weightedUnion
-    -- * Config file records
-    , ConfigObj (..)
-    , DefaultsConfig (..)
-    , LinkConfig (..)
-    , MaybeLinkCfg
-    -- * Strict Link with no Maybe values
-    , StrictLink (..)
     ) where
 
 import qualified Data.Yaml as Y
@@ -52,6 +51,7 @@ instance Y.FromJSON LinkConfig
 
 type MaybeLinkCfg = Maybe (Either String LinkConfig)
 
+-- | Strict Link with no Maybe values
 data StrictLink = StrictLink
     { create   :: !Bool    -- ^ Create parent dirs (default: false)
     , path     :: !FilePath  -- ^ The source of the link (default: false)
