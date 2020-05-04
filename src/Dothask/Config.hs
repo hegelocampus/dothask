@@ -14,6 +14,7 @@ module Dothask.Config
     , buildLinkCfg
     , removeMaybes
     , weightedUnion
+    , empty
     ) where
 
 import qualified Data.Yaml as Y
@@ -59,6 +60,22 @@ data StrictLink = StrictLink
     , force    :: !Bool    -- ^ Force removal of target (default: false)
     , relative :: !Bool    -- ^ Relative path to source (default: false)
     } deriving stock (Generic, Show)
+
+-- | This should never be used outside of testing
+empty :: ConfigObj
+empty = ConfigObj
+    { defaults = DefaultsConfig
+        { linkConfig = LinkConfig
+            { createCfg   = Just False
+            , pathCfg     = Just ""
+            , relinkCfg   = Just False
+            , forceCfg    = Just False
+            , relativeCfg = Just False
+            }
+            , createConfig = Nothing
+        }
+    , link = HM.empty
+    }
 
 -- | Build a link from a string representing the path and a LinkConfig object.
 -- TODOMAYBE: Empty string to create path to "./filename", this could be
