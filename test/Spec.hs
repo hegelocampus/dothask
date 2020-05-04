@@ -9,12 +9,12 @@ import qualified Dothask.Config as C (empty)
 
 
 main :: IO ()
-main = hspec $ do
+main = hspec <$>
     describe "Dothask.Config.parseConfig" $ do
-        it "does not return an empty ConfigObj" $ do
+        it "does not return an empty ConfigObj" $
             parseConfig "dot.config.yaml" `shouldNotReturn` C.empty
 
-        context "When passed something other than a yaml file" $ do
-            it "throws an exception" $ do
+        context "When passed something other than a yaml file" .
+            it "throws an exception" $
                 parseConfig "not.a.yaml" `shouldThrow` anyException
 
