@@ -32,9 +32,6 @@ import Dothask.Config
     , StrictLink (..)
     )
 
--- TODO: Create setDefaults function
--- setDefaults should use Data.Yaml (.!=) to set missing default values
-
 -- | Create error message from Format.
 raiseErrorF :: Format Text (a -> Text) -> a -> c
 raiseErrorF txt = error . T.unpack . format txt
