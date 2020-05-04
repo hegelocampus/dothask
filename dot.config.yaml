@@ -1,9 +1,10 @@
 defaults:
   linkConfig:
     create: true
-    force: true
+    force: false
 link:
-  ~/.profile: profile
+  ~/.profile:
+    path: profile
   ~/.vimrc:
     path: vim/vimrc
   ~/.bashrc:

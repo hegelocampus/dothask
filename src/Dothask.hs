@@ -90,7 +90,7 @@ makeLink pth StrictLink
 -- values if avaliable, otherwise use default values.
 setDefaults :: LinkConfig -> MaybeLinkCfg -> StrictLink
 setDefaults cfg lnk
-    | isJust lnk = removeMaybes . either buildWCfg unionCfg $ fromJust lnk
+    | isJust lnk = removeMaybes . unionCfg $ fromJust lnk
     | otherwise = removeMaybes $ buildWCfg ""
   where
       unionCfg bltLnk = weightedUnion bltLnk cfg

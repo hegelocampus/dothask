@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 
 module Dothask.Config
     (
@@ -26,17 +27,20 @@ import Prelude hiding (FilePath)
 
 -- | TODO Set defaults to be Maybe DefaultsConfig.
 data ConfigObj = ConfigObj
-    { defaults :: !DefaultsConfig                                            -- ^ Defaults config object
-    -- Order of operations
+    { defaults :: !DefaultsConfig                  -- ^ Defaults config object
     , link     :: !(HM.HashMap Text MaybeLinkCfg)  -- ^ Link configuration
-    } deriving stock (Generic, Show)
+    } deriving stock (Generic, Show, Eq)
 
 instance Y.FromJSON ConfigObj
+
+--typeof LinkCfg =
+
+type MaybeLinkCfg = Maybe LinkConfig
 
 data DefaultsConfig = DefaultsConfig
     { linkConfig   :: !LinkConfig
     , createConfig :: !(Maybe Y.Object)
-    } deriving stock (Generic, Show)
+    } deriving stock (Generic, Show, Eq)
 
 instance Y.FromJSON DefaultsConfig
 
@@ -46,11 +50,9 @@ data LinkConfig = LinkConfig
     , relinkCfg   :: !(Maybe Bool)    -- ^ Remove target symlink (default: false)
     , forceCfg    :: !(Maybe Bool)    -- ^ Force removal of target (default: false)
     , relativeCfg :: !(Maybe Bool)    -- ^ Relative path to source (default: false)
-    } deriving stock (Generic, Show)
+    } deriving stock (Generic, Show, Eq)
 
 instance Y.FromJSON LinkConfig
-
-type MaybeLinkCfg = Maybe (Either String LinkConfig)
 
 -- | Strict Link with no Maybe values
 data StrictLink = StrictLink
@@ -74,7 +76,7 @@ empty = ConfigObj
             }
             , createConfig = Nothing
         }
-    , link = HM.empty
+    , link = HM.empty :: HM.HashMap Text MaybeLinkCfg
     }
 
 -- | Build a link from a string representing the path and a LinkConfig object.
