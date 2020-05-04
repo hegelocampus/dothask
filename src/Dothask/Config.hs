@@ -4,13 +4,13 @@
 module Dothask.Config
     (
     -- * Types
-    , ConfigObj (..)
+    ConfigObj (..)
     , DefaultsConfig (..)
     , LinkConfig (..)
     , MaybeLinkCfg
     , StrictLink (..)
       -- * Utility functions for dealing with config records
-      parseConfig
+    , parseConfig
     , buildLinkCfg
     , removeMaybes
     , weightedUnion
