@@ -82,7 +82,7 @@ makeLink pth StrictLink
     , force = frc
     , relative = rel
     }
-    = checkTree (dropExtension pth) c >>
+    = checkTree (directory pth) c >>
       cleanTarget frc rln pth >>
       symlink src pth
 
