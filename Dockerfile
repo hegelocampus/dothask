@@ -9,7 +9,7 @@ COPY ./dothask.cabal /app/build/dothask.cabal
 ##RUN cabal install exe:dothask --only-dependencies -j4
 
 COPY . /app/build/
-RUN cabal install exe:dothask -v0 -j4
+RUN cabal install exe:dothask -v0 -j5
 
 RUN cabal build exe:dothask -g --builddir=.
 
