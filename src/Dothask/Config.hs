@@ -33,8 +33,6 @@ data ConfigObj = ConfigObj
 
 instance Y.FromJSON ConfigObj
 
---typeof LinkCfg =
-
 type MaybeLinkCfg = Maybe LinkConfig
 
 data DefaultsConfig = DefaultsConfig

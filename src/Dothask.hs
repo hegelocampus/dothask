@@ -94,7 +94,7 @@ setDefaults cfg lnk
     | otherwise = removeMaybes $ buildWCfg ""
   where
       unionCfg bltLnk = weightedUnion bltLnk cfg
-      buildWCfg src = buildLinkCfg src cfg
+      buildWCfg src   = buildLinkCfg src cfg
 
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ =
