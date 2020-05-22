@@ -4,7 +4,7 @@
 [![Stackage Lts](http://stackage.org/package/dothask/badge/lts)](http://stackage.org/lts/package/dothask)
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Dotfile setup automation written in Haskell
+Dotfile setup automation written in Haskell. Reverse-engineered/heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
 
 ## How to use:
 Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `$HOME/.dotfiles` you should cd into `$HOME/.dotfiles`.
