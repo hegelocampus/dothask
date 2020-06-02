@@ -33,14 +33,14 @@ import Dothask.Config
     )
 
 -- | Create error message from Format.
-raiseErrorF :: Format Text (a -> Text) -> a -> c
-raiseErrorF txt = error . T.unpack . format txt
+formatForError :: Format Text (a -> Text) -> a -> String
+formatForError txt = T.unpack . format txt
 
 -- | Clean target symlink if needed.
 cleanTargetLink :: FilePath -> IO ()
 cleanTargetLink pth = testfile pth >>= \tstpth -> if tstpth
     then isNotSymbolicLink pth >>= \isLn -> if isLn
-        then raiseErrorF ("File already exists at: " % fp % "\n") pth
+        then error $ formatForError ("File already exists at: " % fp % "\n") pth
         else rm pth >> printf ("Removing existing symlink: " % fp % "\n") pth
     else printf ("Target "%fp%" is already clean.\n") pth
 
@@ -58,7 +58,7 @@ cleanTarget :: Bool -> Bool -> FilePath -> IO ()
 cleanTarget True _ pth = cleanTargetFile pth
 cleanTarget _ True pth = cleanTargetLink pth
 cleanTarget _ _ pth    = testfile pth >>= \exists -> if exists
-    then raiseErrorF ("Filepath is not clean!\n"%fp%" already exists!\n") pth
+    then error $ formatForError ("Filepath is not clean!\n"%fp%" already exists!\n") pth
     else printf ("Path is clean: "%fp%"\n") pth
 
 -- | Check that the tree exists and if it can be created.
@@ -66,7 +66,7 @@ checkTree :: FilePath -> Bool -> IO ()
 checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
 checkTree pth _ = testdir pth >>= \exists -> if exists
     then printf (fp%" already exists\n") pth
-    else raiseErrorF ("Directory "%fp%" does not exist!\n") pth
+    else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
 
