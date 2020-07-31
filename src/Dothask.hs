@@ -101,8 +101,6 @@ setDefaults cfg lnk
 
 -- | If there is a leading tilde replace it with the users $HOME path,
 -- else return the path as it stands
--- TODO: This will need to be modified to change the path to be relative if the
--- rel flag is applied
 parsePath :: FilePath -> Text -> FilePath
 parsePath usrHome txtPth = maybe pth (usrHome </>) filep
   where filep = stripPrefix "~/" pth
