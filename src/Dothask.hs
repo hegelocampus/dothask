@@ -101,18 +101,18 @@ setDefaults cfg lnk
 
 -- | If there is a leading tilde replace it with the users $HOME path,
 -- else return the path as it stands
-parsePath :: FilePath -> FilePath -> FilePath
-parsePath pth usrHome = if isNothing fp then pth else usrHome <.> fp
-  where fp = stripPrefix "~" pth
+-- TODO: This will need to be modified to change the path to be relative if the
+-- rel flag is applied
+parsePath :: FilePath -> Text -> FilePath
+parsePath usrHome txtPth = maybe pth (usrHome </>) filep
+  where filep = stripPrefix "~/" pth
+        pth = fromText txtPth
 
--- TODO: Import System.Directory
 buildDots :: String -> Bool -> IO ()
 buildDots configPath _ = do
     ConfigObj { defaults = cfg, link = lnks } <- parseConfig configPath
-    userHomePth <- getHomeDirectory
-    -- Pass makeLink a pure StrictLink recond created from Link,
-    -- Config settings, and defaults
+    usrHome <- home
     mapM_ (\(trg, lnk) ->
-          makeLink (parsePath $ fromText trg) $ setDefaults (linkConfig cfg) lnk
+          makeLink (parsePath usrHome trg) $ setDefaults (linkConfig cfg) lnk
           ) $ HM.toList lnks
 
