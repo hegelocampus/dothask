@@ -64,6 +64,9 @@ cleanTarget _ _ pth    = testfile pth >>= \exists -> if exists
 -- | Check that the tree exists and if it can be created.
 checkTree :: FilePath -> Bool -> IO ()
 checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
+-- testdir pth needs to be passed an absolute path.
+-- Right now its getting ~/ and its failing because it doesn't think ~/ is an
+-- existing path
 checkTree pth _ = testdir pth >>= \exists -> if exists
     then printf (fp%" already exists\n") pth
     else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
@@ -96,12 +99,20 @@ setDefaults cfg lnk
       unionCfg bltLnk = weightedUnion bltLnk cfg
       buildWCfg src   = buildLinkCfg src cfg
 
+-- | If there is a leading tilde replace it with the users $HOME path,
+-- else return the path as it stands
+parsePath :: FilePath -> FilePath -> FilePath
+parsePath pth usrHome = if isNothing fp then pth else usrHome <.> fp
+  where fp = stripPrefix "~" pth
+
+-- TODO: Import System.Directory
 buildDots :: String -> Bool -> IO ()
-buildDots configPath _ =
-  parseConfig configPath >>= \ConfigObj { defaults = cfg, link = lnks } ->
+buildDots configPath _ = do
+    ConfigObj { defaults = cfg, link = lnks } <- parseConfig configPath
+    userHomePth <- getHomeDirectory
     -- Pass makeLink a pure StrictLink recond created from Link,
     -- Config settings, and defaults
     mapM_ (\(trg, lnk) ->
-            makeLink (fromText trg) $ setDefaults (linkConfig cfg) lnk
-        ) $ HM.toList lnks
+          makeLink (parsePath $ fromText trg) $ setDefaults (linkConfig cfg) lnk
+          ) $ HM.toList lnks
 
