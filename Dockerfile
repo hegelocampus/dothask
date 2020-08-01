@@ -15,9 +15,10 @@ RUN cabal build exe:dothask -g --builddir=.
 
 FROM archlinux:latest
 
-RUN pacman -Syyuq --noconfirm && pacman -S zsh git xdg-user-dirs --noconfirm
-RUN useradd -m test && xdg-user-dirs-update
+RUN pacman -Syyuq --noconfirm && pacman -S zsh git xdg-user-dirs vim --noconfirm
 
+RUN useradd -ms /bin/zsh test && xdg-user-dirs-update
+USER test
 WORKDIR /home/test/
 
 RUN git clone https://github.com/hegelocampus/.dotfiles
