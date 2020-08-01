@@ -77,8 +77,8 @@ checkTree pth _ = testdir pth >>= \exists -> if exists
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
-makeLink :: FilePath -> StrictLink -> IO ()
-makeLink pth StrictLink
+makeLink :: FilePath -> FilePath -> StrictLink -> IO ()
+makeLink curpwd pth StrictLink
     { create = c
     , path = src
     , relink = rln
@@ -87,7 +87,11 @@ makeLink pth StrictLink
     }
     = checkTree (directory pth) c >>
       cleanTarget frc rln pth >>
-      symlink src pth
+      symlink pth fullSrc
+  where
+      fullSrc = curpwd </> filep
+      filep = if src == "" then fileWithoutDot else src
+      fileWithoutDot = decodeString . tail . encodeString $ filename pth
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
@@ -110,7 +114,8 @@ buildDots :: String -> Bool -> IO ()
 buildDots configPath _ = do
     ConfigObj { defaults = cfg, link = lnks } <- parseConfig configPath
     usrHome <- home
+    curpwd <- pwd
     mapM_ (\(trg, lnk) ->
-          makeLink (parsePath usrHome trg) $ setDefaults (linkConfig cfg) lnk
+          makeLink curpwd (parsePath usrHome trg) $ setDefaults (linkConfig cfg) lnk
           ) $ HM.toList lnks
 
