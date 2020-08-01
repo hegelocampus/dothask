@@ -68,7 +68,7 @@ checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
 -- Right now its getting ~/ and its failing because it doesn't think ~/ is an
 -- existing path
 checkTree pth _ = testdir pth >>= \exists -> if exists
-    then printf (fp%" already exists\n") pth
+    then printf ("Do not need to create "fp%"\n") pth
     else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
@@ -85,9 +85,10 @@ makeLink curpwd pth StrictLink
     , force = frc
     , relative = rel
     }
-    = checkTree (directory pth) c >>
+    = printf ("Attempting to link "%fp%" to "%fp%"\n") fullSrc pth >>
+      checkTree (directory pth) c >>
       cleanTarget frc rln pth >>
-      symlink pth fullSrc
+      symlink fullSrc pth
   where
       fullSrc = curpwd </> filep
       filep = if src == "" then fileWithoutDot else src
