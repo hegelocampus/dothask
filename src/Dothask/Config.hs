@@ -43,22 +43,22 @@ data DefaultsConfig = DefaultsConfig
 instance Y.FromJSON DefaultsConfig
 
 data LinkConfig = LinkConfig
-    { createCfg   :: !(Maybe Bool)    -- ^ Create parent dirs (default: false)
-    , pathCfg     :: !(Maybe String)  -- ^ The source of the link (default: false)
-    , relinkCfg   :: !(Maybe Bool)    -- ^ Remove target symlink (default: false)
-    , forceCfg    :: !(Maybe Bool)    -- ^ Force removal of target (default: false)
-    , relativeCfg :: !(Maybe Bool)    -- ^ Relative path to source (default: false)
+    { create   :: !(Maybe Bool)    -- ^ Create parent dirs (default: false)
+    , path     :: !(Maybe String)  -- ^ The source of the link (default: false)
+    , relink   :: !(Maybe Bool)    -- ^ Remove target symlink (default: false)
+    , force    :: !(Maybe Bool)    -- ^ Force removal of target (default: false)
+    , relative :: !(Maybe Bool)    -- ^ Relative pathS to source (default: false)
     } deriving stock (Generic, Show, Eq)
 
 instance Y.FromJSON LinkConfig
 
 -- | Strict Link with no Maybe values
 data StrictLink = StrictLink
-    { create   :: !Bool    -- ^ Create parent dirs (default: false)
-    , path     :: !FilePath  -- ^ The source of the link (default: false)
-    , relink   :: !Bool    -- ^ Remove target symlink (default: false)
-    , force    :: !Bool    -- ^ Force removal of target (default: false)
-    , relative :: !Bool    -- ^ Relative path to source (default: false)
+    { createS   :: !Bool    -- ^ Create parent dirs (default: false)
+    , pathS     :: !FilePath  -- ^ The source of the link (default: false)
+    , relinkS   :: !Bool    -- ^ Remove target symlink (default: false)
+    , forceS    :: !Bool    -- ^ Force removal of target (default: false)
+    , relativeS :: !Bool    -- ^ Relative pathS to source (default: false)
     } deriving stock (Generic, Show)
 
 -- | This should never be used outside of testing
@@ -66,27 +66,27 @@ empty :: ConfigObj
 empty = ConfigObj
     { defaults = DefaultsConfig
         { linkConfig = LinkConfig
-            { createCfg   = Just False
-            , pathCfg     = Just ""
-            , relinkCfg   = Just False
-            , forceCfg    = Just False
-            , relativeCfg = Just False
+            { create   = Just False
+            , path     = Just ""
+            , relink   = Just False
+            , force    = Just False
+            , relative = Just False
             }
             , createConfig = Nothing
         }
     , link = HM.empty :: HM.HashMap Text MaybeLinkCfg
     }
 
--- | Build a link from a string representing the path and a LinkConfig object.
--- TODOMAYBE: Empty string to create path to "./filename", this could be
+-- | Build a link from a string representing the pathS and a LinkConfig object.
+-- TODOMAYBE: Empty string to createS pathS to "./filename", this could be
 -- implemented in a different way
 buildLinkCfg :: String -> LinkConfig -> LinkConfig
 buildLinkCfg str cfg = LinkConfig
-    { createCfg   = createCfg cfg
-    , pathCfg     = Just str
-    , relinkCfg   = relinkCfg cfg
-    , forceCfg    = forceCfg cfg
-    , relativeCfg = relativeCfg cfg
+    { create   = create cfg
+    , path     = Just str
+    , relink   = relink cfg
+    , force    = force cfg
+    , relative = relative cfg
     }
 
 -- | Combine two Links where values in the first that are Nothing are replaced
@@ -94,21 +94,21 @@ buildLinkCfg str cfg = LinkConfig
 -- Uses Data.HashMap.Strict.unionWith.
 weightedUnion :: LinkConfig -> LinkConfig -> LinkConfig
 weightedUnion x y = LinkConfig
-    { createCfg   = leftIfMaybe (createCfg y) (createCfg x)
-    , pathCfg     = leftIfMaybe (pathCfg y) (pathCfg x)
-    , relinkCfg   = leftIfMaybe (relinkCfg y) (relinkCfg x)
-    , forceCfg    = leftIfMaybe (forceCfg y) (forceCfg x)
-    , relativeCfg = leftIfMaybe (relativeCfg y) (relativeCfg x)
+    { create   = leftIfMaybe (create x) (create y)
+    , path     = leftIfMaybe (path x) (path y)
+    , relink   = leftIfMaybe (relink x) (relink y)
+    , force    = leftIfMaybe (force x) (force y)
+    , relative = leftIfMaybe (relative x) (relative y)
     }
   where leftIfMaybe v1 v2 = if isJust v1 then v1 else v2
 
 removeMaybes :: LinkConfig -> StrictLink
 removeMaybes x = StrictLink
-    { create = fromMaybe False $ createCfg x
-    , path = decodeString . fromMaybe "" $ pathCfg x
-    , relink = fromMaybe False $ relinkCfg x
-    , force = fromMaybe False $ forceCfg x
-    , relative = fromMaybe False $ relativeCfg x
+    { createS = fromMaybe False $ create x
+    , pathS = decodeString . fromMaybe "" $ path x
+    , relinkS = fromMaybe False $ relink x
+    , forceS = fromMaybe False $ force x
+    , relativeS = fromMaybe False $ relative x
     }
 
 -- TODO: Parse DefaultsConfig object to fill missing values with defaults

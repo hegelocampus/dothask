@@ -64,11 +64,8 @@ cleanTarget _ _ pth    = testfile pth >>= \exists -> if exists
 -- | Check that the tree exists and if it can be created.
 checkTree :: FilePath -> Bool -> IO ()
 checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
--- testdir pth needs to be passed an absolute path.
--- Right now its getting ~/ and its failing because it doesn't think ~/ is an
--- existing path
 checkTree pth _ = testdir pth >>= \exists -> if exists
-    then printf ("Do not need to create "fp%"\n") pth
+    then printf ("Do not need to create containing directory: "%fp%"\n") pth
     else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
 
 -- NOTE: symlink fails if the file already exists
@@ -77,13 +74,14 @@ checkTree pth _ = testdir pth >>= \exists -> if exists
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
+-- TODO: Remove exceptions, change checkTree to return bool indicating if directory exits or it was created. Only preceed onto clean target if true. Same for cleanTarget
 makeLink :: FilePath -> FilePath -> StrictLink -> IO ()
 makeLink curpwd pth StrictLink
-    { create = c
-    , path = src
-    , relink = rln
-    , force = frc
-    , relative = rel
+    { createS = c
+    , pathS = src
+    , forceS = frc
+    , relinkS = rln
+    , relativeS = rel
     }
     = printf ("Attempting to link "%fp%" to "%fp%"\n") fullSrc pth >>
       checkTree (directory pth) c >>
@@ -101,8 +99,8 @@ setDefaults cfg lnk
     | isJust lnk = removeMaybes . unionCfg $ fromJust lnk
     | otherwise = removeMaybes $ buildWCfg ""
   where
-      unionCfg bltLnk = weightedUnion bltLnk cfg
-      buildWCfg src   = buildLinkCfg src cfg
+      unionCfg x    = weightedUnion x cfg
+      buildWCfg src = buildLinkCfg src cfg
 
 -- | If there is a leading tilde replace it with the users $HOME path,
 -- else return the path as it stands
