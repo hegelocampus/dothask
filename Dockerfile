@@ -13,6 +13,8 @@ RUN rm -rf ~/.stack && \
     stack setup && \
     stack install --split-objs --ghc-options="fPIC -fllvm" --only-dependencies
 
+RUN stack build -j 9 --only-dependencies
+
 COPY . /app/build/
 RUN stack build dothask -j 9
 
@@ -23,6 +25,7 @@ RUN pacman -Syyuq --noconfirm && pacman -S zsh git xdg-user-dirs vim --noconfirm
 RUN useradd -ms /bin/zsh test && xdg-user-dirs-update
 USER test
 WORKDIR /home/test/
+RUN touch /home/test/.zshrc
 
 RUN git clone https://github.com/hegelocampus/.dotfiles
 
