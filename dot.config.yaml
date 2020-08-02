@@ -8,6 +8,7 @@ link:
   ~/.vimrc:
     path: vim/vimrc
   ~/.bashrc:
+    force: true
   ~/.gitconfig:
   ~/.Xmodmap:
   ~/.Xresources:
