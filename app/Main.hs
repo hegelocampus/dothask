@@ -1,7 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main (main) where
 
+import Control.Monad as CM
+import System.Posix.User (getRealUserID)
 import Options.Applicative
---import Data.Semigroup ((<>))
+import Turtle (die, printf)
 import Dothask (buildDots)
 
 data Params = Params
@@ -22,10 +26,20 @@ params = Params
      <> help "Whether to be quiet" )
 
 main :: IO ()
-main = execParser opts >>= \p -> buildDots (configPath p) (quiet p)
+main = noSudo >> execParser opts >>= \p -> buildDots (configPath p) (quiet p)
   where
     opts = info (helper <*> params)
       ( fullDesc
       <> progDesc "Automatically create symlinks for configuration files"
       <> header "dothask - a dotfile setup automation tool" )
+
+noSudo :: IO ()
+noSudo = getRealUserID >>= \uId -> when (show uId == "0")
+    $ printf sudoWarn >> die "You may not run this command as sudo!"
+  where
+        sudoWarn = "I appreciate that you trust me enough to grant me \
+                \superuser permissions, \
+                \But please run this command without sudo. \n\
+                \If the program is unable to succeed without superuser \
+                \permissions, please check your file permissions. \n"
 
