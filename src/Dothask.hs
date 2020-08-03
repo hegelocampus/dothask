@@ -54,6 +54,8 @@ cleanTargetFile pth = testfile pth >>= \exists -> if exists
     else printf ("Target "%fp%" is already clean.\n") pth
 
 -- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
+-- TODO: Require user input to overwrite existing file usless passed a special
+-- "--do-not-ask" flag.
 cleanTarget :: Bool -> Bool -> FilePath -> IO ()
 cleanTarget True _ pth = cleanTargetFile pth
 cleanTarget _ True pth = cleanTargetLink pth
@@ -89,7 +91,7 @@ makeLink curpwd pth StrictLink
       symlink fullSrc pth
   where
       fullSrc = curpwd </> filep
-      filep = if src == "" then fileWithoutDot else src
+      filep = if filename src == "" then src </> fileWithoutDot else src
       fileWithoutDot = decodeString . tail . encodeString $ filename pth
 
 -- | Fill the default values for the LinkConfig object based on the set config

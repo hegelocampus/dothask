@@ -1,17 +1,41 @@
 defaults:
-  linkConfig:
-    create: true
-    force: false
+    linkConfig:
+      create: true
+      force: true
 link:
-  ~/.profile:
-    path: profile
-  ~/.vimrc:
-    path: vim/vimrc
-  ~/.bashrc:
-    force: true
-  ~/.gitconfig:
-  ~/.Xmodmap:
-  ~/.Xresources:
-  ~/.xinitrc:
-  ~/.xprofile:
+    ~/.profile:
+    ~/.bash_profile:
+    ~/.bashrc:
+    ~/.bashbee:
+    ~/.bash_logout:
+    ~/.gitconfig:
+    ~/.Xmodmap:
+    ~/.Xresources:
+    ~/.xinitrc:
+        force: false
+    ~/.xprofile:
+    ~/.zshrc:
+        path: zsh/
+    ~/.zshenv:
+        path: zsh/
+    ~/.vimrc:
+        path:  vim/
+    ~/.taskrc:
+        path: config/
+    ~/.i3/config:
+        path: config/i3
+    ~/.config/redshift.conf:
+        path: config/redshift
+    ~/.config/i3status/config/i3status.conf:
+        path: config/i3status
+    ~/.config/kitty/kitty.conf:
+        path: config/kitty
+    ~/.config/ranger/rc.conf:
+        path: config/ranger
+    ~/.config/rofi/config:
+        path: config/rofi
+    ~/.config/compton.conf:
+        path: config/compton-blur
+    ~/.config/dunst/dunstrc:
+        path: config/dunstrc
 
