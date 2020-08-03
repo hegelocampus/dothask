@@ -94,15 +94,17 @@ cleanTargetLink pth = testfile pth >>= \isFile ->
 -- TODO: Add printline that asks user to confirm that they want to delete the
 -- existing file. It would probably be most clear to deligate this task to
 -- a helper funciton.
-cleanTargetFile :: FilePath -> IO ()
-cleanTargetFile pth = testfile pth >>= \isFile ->
-    CM.when isFile $ printf ("Removing existing file: '"%fp%"'...\n") pth >> rm pth
+cleanTargetFile :: FilePath -> Bool -> IO ()
+cleanTargetFile pth noConfirm = testfile pth >>= \isFile ->
+    CM.when isFile $ if noConfirm
+                        then printf ("Removing existing file: '"%fp%"'...\n") pth >> rm pth
+                        else  printf ("Removing existing file: '"%fp%"'...\n") pth
 
 -- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
 -- TODO: Require user input to overwrite existing file usless passed a special
 -- "--do-not-ask" flag.
 cleanTarget :: Bool -> Bool -> FilePath -> IO ()
-cleanTarget True _ pth = cleanTargetFile pth
+cleanTarget True _ pth = cleanTargetFile pth True
 cleanTarget _ True pth = cleanTargetLink pth
 cleanTarget _ _ pth    = testfile pth >>= \exists ->
     CM.when exists . error $ errorMsg pth
