@@ -7,7 +7,7 @@
 Dotfile setup automation written in Haskell. Reverse-engineered/heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
 
 ## How to use:
-Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `$HOME/.dotfiles` you should cd into `$HOME/.dotfiles`.
+Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `./dothask`.
 
 You need to create a `dot.config.yaml` file in your dotfile directory.
 
