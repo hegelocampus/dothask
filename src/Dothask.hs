@@ -16,6 +16,7 @@ module Dothask (
 import qualified Data.Text as T
 --import Data.Yaml ((.:))
 import qualified Data.HashMap.Strict as HM
+import Control.Monad as CM
 import Data.Maybe
 import Turtle hiding (relative)
 import Prelude hiding (FilePath)
@@ -38,20 +39,18 @@ formatForError txt = T.unpack . format txt
 
 -- | Clean target symlink if needed.
 cleanTargetLink :: FilePath -> IO ()
-cleanTargetLink pth = testfile pth >>= \tstpth -> if tstpth
-    then isNotSymbolicLink pth >>= \isLn -> if isLn
+cleanTargetLink pth = testfile pth >>= \isFile ->
+    CM.when isFile $ isNotSymbolicLink pth >>= \isLn -> if isLn
         then error $ formatForError ("File already exists at: " % fp % "\n") pth
         else rm pth >> printf ("Removing existing symlink: " % fp % "\n") pth
-    else printf ("Target "%fp%" is already clean.\n") pth
 
 -- | Clean target file if needed.
 -- TODO: Add printline that asks user to confirm that they want to delete the
 -- existing file. It would probably be most clear to deligate this task to
 -- a helper funciton.
 cleanTargetFile :: FilePath -> IO ()
-cleanTargetFile pth = testfile pth >>= \exists -> if exists
-    then rm pth >> printf ("Removing existing file: "%fp%"\n") pth
-    else printf ("Target "%fp%" is already clean.\n") pth
+cleanTargetFile pth = testfile pth >>= \isFile ->
+    CM.when isFile $ printf ("Removing existing file: '"%fp%"'...\n") pth >> rm pth
 
 -- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
 -- TODO: Require user input to overwrite existing file usless passed a special
@@ -59,9 +58,9 @@ cleanTargetFile pth = testfile pth >>= \exists -> if exists
 cleanTarget :: Bool -> Bool -> FilePath -> IO ()
 cleanTarget True _ pth = cleanTargetFile pth
 cleanTarget _ True pth = cleanTargetLink pth
-cleanTarget _ _ pth    = testfile pth >>= \exists -> if exists
-    then error $ formatForError ("Filepath is not clean!\n"%fp%" already exists!\n") pth
-    else printf ("Path is clean: "%fp%"\n") pth
+cleanTarget _ _ pth    = testfile pth >>= \exists ->
+    CM.when exists . error $ errorMsg pth
+  where errorMsg = formatForError ("Filepath is not clean!\n"%fp%" already exists!\n")
 
 -- | Check that the tree exists and if it can be created.
 checkTree :: FilePath -> Bool -> IO ()
@@ -69,8 +68,6 @@ checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
 checkTree pth _ = testdir pth >>= \exists -> if exists
     then printf ("Do not need to create containing directory: "%fp%"\n") pth
     else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
-
--- NOTE: symlink fails if the file already exists
 
 -- TODO: Need to negotiate LinkConfig w/ set defaults
 -- | Build symlink for LinkConfig datatype. This Function will raise an
