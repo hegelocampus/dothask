@@ -2,6 +2,7 @@ defaults:
     linkConfig:
       create: true
       force: true
+      relink: true
 link:
     ~/.profile:
     ~/.bash_profile:
