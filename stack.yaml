@@ -3,6 +3,7 @@ extra-deps:
   - yaml-0.11.3.0
   - text-1.2.4.0
   - turtle-1.5.19
+  - unix-2.7.2.2
   - unordered-containers-0.2.10.0
   - optparse-applicative-0.15.1.0
   - QuickCheck-2.13.2
