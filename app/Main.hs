@@ -38,8 +38,8 @@ noSudo = getRealUserID >>= \uId -> when (show uId == "0")
     $ printf sudoWarn >> die "You may not run this command as sudo!"
   where
         sudoWarn = "I appreciate that you trust me enough to grant me \
-                \superuser permissions, \
-                \But please run this command without sudo. \n\
+                \superuser permissions, \n\
+                \but please run this program will not run with sudo. \n\
                 \If the program is unable to succeed without superuser \
                 \permissions, please check your file permissions. \n"
 
