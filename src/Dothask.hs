@@ -83,31 +83,45 @@ makeLink curpwd pth StrictLink
 formatForError :: Format Text (a -> Text) -> a -> String
 formatForError txt = T.unpack . format txt
 
+-- ("Will not remove regular file at: " % fp % "\n") pth
 -- | Clean target symlink if needed.
-cleanTargetLink :: FilePath -> IO ()
+cleanTargetLink :: FilePath -> IO Bool
 cleanTargetLink pth = testfile pth >>= \isFile ->
-    CM.when isFile $ isNotSymbolicLink pth >>= \isLn -> if isLn
-        then error $ formatForError ("Will not remove regular file at: " % fp % "\n") pth
-        else printf ("Removing existing symlink: " % fp % "\n") pth >> rm pth
+    if isFile
+       then isNotSymbolicLink pth >>= \isLn -> if isLn
+            then return False
+            else removeFile "symlink" pth
+        else return True
 
--- | Clean target file if needed.
--- TODO: Add printline that asks user to confirm that they want to delete the
--- existing file. It would probably be most clear to deligate this task to
--- a helper funciton.
-cleanTargetFile :: FilePath -> Bool -> IO ()
+-- | Clean target file if needed, return true if filepath was able to be cleaned.
+cleanTargetFile :: FilePath -> Bool -> IO Bool
 cleanTargetFile pth noConfirm = testfile pth >>= \isFile ->
-    CM.when isFile $ if noConfirm
-                        then printf ("Removing existing file: '"%fp%"'...\n") pth >> rm pth
-                        else  printf ("Removing existing file: '"%fp%"'...\n") pth
+    if isFile
+        then if noConfirm
+            then removeFile "file" pth
+            else requireConfirm (removeFile "file") pth
+        else return True
+
+removeFile :: Text -> FilePath -> IO Bool
+removeFile fType pth = printf ("Removing existing " %s% ": '" % fp % "'...\n") fType pth
+                 >> rm pth >> return True
+
+
+requireConfirm :: (FilePath -> IO Bool) -> FilePath  -> IO Bool
+requireConfirm fileOp pth = do
+    printf ("Are you sure you want to overwrite '" % fp % "'?\n") pth
+    res <- getLine
+    if res == "y" || res == "ye" || res == "yes"
+       then fileOp pth
+    else return False
 
 -- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
 -- TODO: Require user input to overwrite existing file usless passed a special
 -- "--do-not-ask" flag.
-cleanTarget :: Bool -> Bool -> FilePath -> IO ()
+cleanTarget :: Bool -> Bool -> FilePath -> IO Bool
 cleanTarget True _ pth = cleanTargetFile pth True
-cleanTarget _ True pth = cleanTargetLink pth
-cleanTarget _ _ pth    = testfile pth >>= \exists ->
-    CM.when exists . error $ errorMsg pth
+cleanTarget _ True pth = cleanTargetLink pth >> return True
+cleanTarget _ _ pth    = not <$> testfile pth
   where errorMsg = formatForError ("Filepath is not clean!\n"%fp%" already exists!\n")
 
 -- | Check that the tree exists and if it can be created.
