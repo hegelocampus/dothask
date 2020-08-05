@@ -10,7 +10,7 @@ import Dothask (buildDots)
 
 data Params = Params
   { configPath  :: String
-  , quiet    :: Bool}
+  , noConfirm   :: Bool}
 
 params :: Parser Params
 params = Params
@@ -21,12 +21,11 @@ params = Params
      <> value "./dot.config.yaml"
      <> help "Custom config file path (default is './dot.config.yaml')" )
   <*> switch
-      ( long "quiet"
-     <> short 'q'
-     <> help "Whether to be quiet" )
+      ( long "no-confirm"
+     <> help "Allow file overwrite without confirmation" )
 
 main :: IO ()
-main = noSudo >> execParser opts >>= \p -> buildDots (configPath p) (quiet p)
+main = noSudo >> execParser opts >>= \p -> buildDots (configPath p) (noConfirm p)
   where
     opts = info (helper <*> params)
       ( fullDesc

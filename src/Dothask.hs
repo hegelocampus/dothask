@@ -32,22 +32,22 @@ import Dothask.Config
 
 -- | Takes in config path, parses config yaml file at that path, contructing softlinks for each etries.
 buildDots :: String -> Bool -> IO ()
-buildDots configPath _ = do
+buildDots configPath noConfirm = do
     ConfigObj { defaults = cfg, link = lnks } <- parseConfig configPath
     usrHome <- home
     curpwd <- pwd
     mapM_ (\(trg, lnk) ->
-          makeLink curpwd (parsePath usrHome trg) $ setDefaults (linkConfig cfg) lnk
+          makeLink curpwd (parsePath usrHome trg) noConfirm
+          $ setDefaults (linkConfig cfg) lnk
           ) $ HM.toList lnks
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
 setDefaults :: LinkConfig -> MaybeLinkCfg -> StrictLink
 setDefaults cfg lnk
-    | isJust lnk = removeMaybes . unionCfg $ fromJust lnk
+    | isJust lnk = removeMaybes $ weightedUnion (fromJust lnk) cfg
     | otherwise = removeMaybes $ buildWCfg ""
   where
-      unionCfg x    = weightedUnion x cfg
       buildWCfg src = buildLinkCfg src cfg
 
 -- | If there is a leading tilde replace it with the users $HOME path,
@@ -61,37 +61,45 @@ parsePath usrHome txtPth = maybe pth (usrHome </>) filep
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
--- TODO: Remove exceptions, change checkTree to return bool indicating if directory exits or it was created. Only preceed onto clean target if true. Same for cleanTarget
-makeLink :: FilePath -> FilePath -> StrictLink -> IO ()
-makeLink curpwd pth StrictLink
+-- TODO: Add param that causes link creation failure to raise an
+-- error and break from the iteration.
+makeLink :: FilePath -> FilePath -> Bool -> StrictLink -> IO ()
+makeLink curpwd pth noConfirm StrictLink
     { createS = c
     , pathS = src
     , forceS = frc
     , relinkS = rln
     --, relativeS = rel
     }
-    = printf ("Attempting to link "%fp%" to "%fp%"\n") fullSrc pth >>
-      checkTree (directory pth) c >>
-      cleanTarget frc rln pth >>
-      symlink fullSrc pth
+    = do
+        printf ("Attempting to link " % s % "\n") lnkTxt
+        dExists <- checkTree (directory pth) c
+        tExists <- cleanTarget frc rln noConfirm pth
+        if dExists && tExists
+           then symlink fullSrc pth
+           else handleBadLink pth lnkTxt tExists
   where
+      lnkTxt = format (fp%" to "%fp) fullSrc pth
       fullSrc = curpwd </> filep
       filep = if filename src == "" then src </> fileWithoutDot else src
       fileWithoutDot = decodeString . tail . encodeString $ filename pth
+
+handleBadLink :: FilePath -> Text -> Bool -> IO()
+handleBadLink pth lnkTxt fpError =
+    eprintf ("Could not create link from "%s%"!\n") lnkTxt
+    >> if fpError
+          then eprintf ("Filepath is not clean!\n"%fp%" already exists!\n") pth
+          else eprintf "Containing directory could not be created!\n"
 
 -- | Create error message from Format.
 formatForError :: Format Text (a -> Text) -> a -> String
 formatForError txt = T.unpack . format txt
 
--- ("Will not remove regular file at: " % fp % "\n") pth
--- | Clean target symlink if needed.
-cleanTargetLink :: FilePath -> IO Bool
-cleanTargetLink pth = testfile pth >>= \isFile ->
-    if isFile
-       then isNotSymbolicLink pth >>= \isLn -> if isLn
-            then return False
-            else removeFile "symlink" pth
-        else return True
+-- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
+cleanTarget :: Bool -> Bool -> Bool -> FilePath -> IO Bool
+cleanTarget True _ noConfirm pth = cleanTargetFile pth noConfirm
+cleanTarget _ True _ pth         = cleanTargetLink pth
+cleanTarget _ _ _ pth            = not <$> testfile pth
 
 -- | Clean target file if needed, return true if filepath was able to be cleaned.
 cleanTargetFile :: FilePath -> Bool -> IO Bool
@@ -100,6 +108,16 @@ cleanTargetFile pth noConfirm = testfile pth >>= \isFile ->
         then if noConfirm
             then removeFile "file" pth
             else requireConfirm (removeFile "file") pth
+        else return True
+
+-- ("Will not remove regular file at: " % fp % "\n") pth
+-- | Clean target symlink if needed.
+cleanTargetLink :: FilePath -> IO Bool
+cleanTargetLink pth = testfile pth >>= \isFile ->
+    if isFile
+        then isNotSymbolicLink pth >>= \notLn -> if notLn
+            then return False
+            else removeFile "symlink" pth
         else return True
 
 removeFile :: Text -> FilePath -> IO Bool
@@ -115,19 +133,10 @@ requireConfirm fileOp pth = do
        then fileOp pth
     else return False
 
--- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
--- TODO: Require user input to overwrite existing file usless passed a special
--- "--do-not-ask" flag.
-cleanTarget :: Bool -> Bool -> FilePath -> IO Bool
-cleanTarget True _ pth = cleanTargetFile pth True
-cleanTarget _ True pth = cleanTargetLink pth >> return True
-cleanTarget _ _ pth    = not <$> testfile pth
-  where errorMsg = formatForError ("Filepath is not clean!\n"%fp%" already exists!\n")
-
 -- | Check that the tree exists and if it can be created.
-checkTree :: FilePath -> Bool -> IO ()
-checkTree pth True = mktree pth >> printf ("Created directory: "%fp%"\n") pth
-checkTree pth _ = testdir pth >>= \exists -> if exists
-    then printf ("Do not need to create containing directory: "%fp%"\n") pth
-    else error $ formatForError ("Directory "%fp%" does not exist!\n") pth
+checkTree :: FilePath -> Bool -> IO Bool
+checkTree pth True = mktree pth
+                     >> printf ("Created directory: "%fp%"\n") pth
+                     >> return True
+checkTree pth _    = testdir pth
 
