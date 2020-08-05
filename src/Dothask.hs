@@ -10,11 +10,10 @@ Dotfile setup automation written in Haskell
 
 module Dothask (buildDots, module Dothask.Config) where
 
-import qualified Data.Text as T
---import Data.Yaml ((.:))
+--import Control.Monad as CM
 import qualified Data.HashMap.Strict as HM
-import Control.Monad as CM
 import Data.Maybe
+import qualified Data.Text as T
 import Turtle hiding (relative, x)
 import Prelude hiding (FilePath)
 
