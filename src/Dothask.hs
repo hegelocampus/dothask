@@ -74,10 +74,10 @@ makeLink curpwd pth noConfirm StrictLink
     = do
         printf ("Attempting to link " % s % "\n") lnkTxt
         dExists <- checkTree (directory pth) c
-        tExists <- cleanTarget frc rln noConfirm pth
-        if dExists && tExists
+        tClean <- cleanTarget frc rln noConfirm pth
+        if dExists && tClean
            then symlink fullSrc pth
-           else handleBadLink pth lnkTxt tExists
+           else handleBadLink pth lnkTxt (not tClean)
   where
       lnkTxt = format (fp%" to "%fp) fullSrc pth
       fullSrc = curpwd </> filep
@@ -88,8 +88,8 @@ handleBadLink :: FilePath -> Text -> Bool -> IO()
 handleBadLink pth lnkTxt fpError =
     eprintf ("Could not create link from "%s%"!\n") lnkTxt
     >> if fpError
-          then eprintf ("Filepath is not clean!\n"%fp%" already exists!\n") pth
-          else eprintf "Containing directory could not be created!\n"
+          then eprintf ("Filepath is not clean!\n"%fp%" already exists!\n\n") pth
+          else eprintf "Containing directory could not be created!\n\n"
 
 -- | Create error message from Format.
 formatForError :: Format Text (a -> Text) -> a -> String
