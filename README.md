@@ -4,7 +4,7 @@
 [![Stackage Lts](http://stackage.org/package/dothask/badge/lts)](http://stackage.org/lts/package/dothask)
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Dotfile setup automation written in Haskell. Reverse-engineered/heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
+Dotfile setup automation written in Haskell. Heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
 
 ## How to use:
 Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `./dothask`.
@@ -13,7 +13,8 @@ You need to create a `dot.config.yaml` file in your dotfile directory.
 
 ## Configuration
 DotHask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
-The expected name for the configuration file is `dot.config.yaml`. You can pass in a custom filepath using `dothask -c <path to config file>`.
+The expected name for the configuration file is `dot.config.yaml`. You can pass in a custom filepath using `dothask -c <path to config file>`.  
+In addition, you may pass the `--no-confirm` flag to override the default file overwite behavior, which will ask you before relpacing any (non symlink) file. Note that this is the behavior even when the link configuration is set to `force`, the force flag simply allows for any overwrite to happen at all.
 
 ### Example Configuration file
 ```yaml
