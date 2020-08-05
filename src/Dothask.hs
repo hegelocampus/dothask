@@ -72,7 +72,7 @@ makeLink curpwd pth noConfirm StrictLink
     --, relativeS = rel
     }
     = do
-        printf ("Attempting to link " % s % "\n") lnkTxt
+        printf ("Attempting to link "%s%"\n") lnkTxt
         dExists <- checkTree (directory pth) c
         tClean <- cleanTarget frc rln noConfirm pth
         if dExists && tClean
@@ -80,8 +80,8 @@ makeLink curpwd pth noConfirm StrictLink
            else handleBadLink pth lnkTxt (not tClean)
   where
       lnkTxt = format (fp%" to "%fp) fullSrc pth
-      fullSrc = curpwd </> filep
-      filep = if filename src == "" then src </> fileWithoutDot else src
+      fullSrc = curpwd </> srcFile
+      srcFile = if filename src == "" then src </> fileWithoutDot else src
       fileWithoutDot = decodeString . tail . encodeString $ filename pth
 
 handleBadLink :: FilePath -> Text -> Bool -> IO()
@@ -110,7 +110,6 @@ cleanTargetFile pth noConfirm = testfile pth >>= \isFile ->
             else requireConfirm (removeFile "file") pth
         else return True
 
--- ("Will not remove regular file at: " % fp % "\n") pth
 -- | Clean target symlink if needed.
 cleanTargetLink :: FilePath -> IO Bool
 cleanTargetLink pth = testfile pth >>= \isFile ->
