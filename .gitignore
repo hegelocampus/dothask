@@ -11,6 +11,8 @@ cabal-dev
 *.prof
 *.aux
 *.hp
+*.png
+*.html
 *.eventlog
 .virtualenv
 .hsenv
