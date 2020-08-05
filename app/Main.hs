@@ -34,11 +34,11 @@ main = noSudo >> execParser opts >>= \p -> buildDots (configPath p) (noConfirm p
 
 noSudo :: IO ()
 noSudo = getRealUserID >>= \uId -> when (show uId == "0")
-    $ printf sudoWarn >> die "You may not run this command as sudo!"
-  where
-        sudoWarn = "I appreciate that you trust me enough to grant me \
-                \superuser permissions, \n\
-                \but please run this program will not run with sudo. \n\
-                \If the program is unable to succeed without superuser \
-                \permissions, please check your file permissions. \n"
+    $ printf sudoWarn >> die "You may not run this command as root!"
+  where sudoWarn =
+            "I appreciate that you trust me enough to grant me \
+            \superuser permissions, \n\
+            \but this program will not run as root. \n\
+            \If this program is unable to succeed without elevated permissions, \
+            \please check the file permissions of the files that you're attempting to link. \n"
 
