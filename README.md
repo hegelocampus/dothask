@@ -63,4 +63,4 @@ Specified as an array of directories.
 ```yaml
 ```
 ## License
-Copyright (c) 2020 Bee Ellis. Released under the MIT License. See [LICENSE.md][license] for details.
+Copyright (c) 2020 Bee Ellis. Released under the MIT License. See [LICENSE.md](license) for details.
