@@ -15,7 +15,7 @@ RUN rm -rf ~/.stack && \
     stack build --ghc-options="fPIC -fllvm" --only-dependencies --fast -j 9
 
 COPY . /app/build/
-RUN stack build dothask -j 9
+RUN stack build dothask -j 9 --silent
 
 FROM archlinux:latest
 
