@@ -7,7 +7,7 @@ cabal-version: 1.12
 name:           dothask
 version:        0.0.0
 synopsis:       Dotfile setup automation written in Haskell
-description:    Dotfile setup automation written in Haskell
+description:    You can find the documentation at <https://github.com
 category:       CLI
 homepage:       https://github.com/bee/dothask
 bug-reports:    https://github.com/bee/dothask/issues
