@@ -1,0 +1,52 @@
+name: dothask
+version: '0.0.0'
+synopsis: Dotfile setup automation written in Haskell
+description: |
+  You can find the documentation at <https://github.com
+
+homepage: https://github.com/bee/dothask
+bug-reports: https://github.com/bee/dothask/issues
+category: CLI
+author: Bee Ellis
+maintainer: Bee Ellis <bellis@gmail.com>
+github: bee/dothask
+license: MIT
+license-file: LICENSE
+dependencies:
+  - base ^>= 4.13.0.0
+  - yaml
+  - text
+  - turtle
+  - unordered-containers
+  - optparse-applicative
+  - unix
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Widentities
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+library:
+  source-dirs: src/
+  exposed-modules:
+    - Dothask
+    - Dothask.Config
+executables:
+  dothask:
+    main: Main.hs
+    source-dirs: app/
+    ghc-options:
+      - -threaded
+      - -rtsopts
+    dependencies:
+      - dothask
+tests:
+  ghci-test:
+    main: Spec.hs
+    source-dirs: test/
+    ghc-options:
+      - -threaded
+    dependencies:
+      - dothask
+      - hspec
+      - QuickCheck
