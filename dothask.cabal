@@ -5,17 +5,20 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           dothask
-version:        0.0.0
+version:        0.0.1
 synopsis:       Dotfile setup automation written in Haskell
 description:    You can find the documentation at <https://github.com
 category:       CLI
-homepage:       https://github.com/bee/dothask
+homepage:       https://github.com/bee/dothask#readme
 bug-reports:    https://github.com/bee/dothask/issues
 author:         Bee Ellis
 maintainer:     Bee Ellis <bellis@gmail.com>
+copyright:      2020 Bee Ellis
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    README.md
 
 source-repository head
   type: git
