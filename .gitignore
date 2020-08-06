@@ -58,3 +58,4 @@ test_dir
 *.html
 *.old
 dot.config.yaml
+*.tar.gz
