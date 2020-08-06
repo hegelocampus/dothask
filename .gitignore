@@ -57,3 +57,4 @@ test_dir
 *.png
 *.html
 *.old
+dot.config.yaml
