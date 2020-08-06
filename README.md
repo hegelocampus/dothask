@@ -6,10 +6,17 @@
 
 Dotfile setup automation written in Haskell. Heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
 
-## How to use:
-Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `./dothask`.
+## Instalation:
+Clone this repository and install dothask with the following commands: 
+```bash
+$ git clone https://github.com/hegelocampus/dothask.git && cd dothask
+$ stack install
+```
 
-You need to create a `dot.config.yaml` file in your dotfile directory.
+You then need to create a `dot.config.yaml` file in your dotfile directory. You can use the [`example.config.yaml`](example.config.yaml) as a starting place if you'd like.
+
+## How to use:
+Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `stack exec dothask`.
 
 ## Configuration
 DotHask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
