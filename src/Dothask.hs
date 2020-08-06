@@ -8,7 +8,11 @@ Dotfile setup automation written in Haskell
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Dothask (buildDots, module Dothask.Config) where
+module Dothask
+    ( buildDots
+    , parsePath
+    , module Dothask.Config
+    ) where
 
 --import Control.Monad as CM
 import qualified Data.HashMap.Strict as HM
