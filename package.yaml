@@ -1,8 +1,9 @@
 name: dothask
 version: '0.0.1'
-synopsis: Dotfile setup automation written in Haskell
+synopsis: Dotfile setup utility
 description: |
-  You can find the documentation at <https://github.com
+  Dotfile setup automation written in Haskell.
+  You can find the documentation at https://github.com/bee/dothask#readme
 
 homepage: https://github.com/bee/dothask#readme
 bug-reports: https://github.com/bee/dothask/issues
