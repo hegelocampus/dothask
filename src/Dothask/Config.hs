@@ -28,7 +28,7 @@ import Prelude hiding (FilePath)
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                  -- ^ Defaults config object
     , link     :: !(HM.HashMap Text MaybeLinkCfg)  -- ^ Link configuration
-    , dir     :: !(Maybe [Text])                  -- ^ Directories to be created
+    , dir      :: !(Maybe [Text])                  -- ^ Directories to be created
     , shell    :: !(Maybe [Text])                  -- ^ Shell scripts to run
     } deriving stock (Generic, Show, Eq)
 
