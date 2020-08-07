@@ -46,7 +46,7 @@ shell:
 ```
 ### Configuration options
 #### Link
-Link specifies how files and directories should be linked. You may specify a file be forcibly linked, overwriting existing files if they exist.
+Link specifies how files and directories should be linked. You may specify a file be forcibly linked, overwriting existing files if they exist, but be aware that **the default behavior for force will still require confirmation before removing normal (non-symlink) files.** If you'd like to override this default behavior and make the stript fully automatic you can pass in the `--no-confirm` flag when you run the program.
 ##### Format
 Available config parameters:
 | Link Option | Explanation |
