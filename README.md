@@ -26,23 +26,22 @@ In addition, you may pass the `--no-confirm` flag to override the default file o
 ### Example Configuration file
 ```yaml
 defaults:
-	link:
-		relink: true
+    link:
+        relink: true
 
 link:
-	~/.dotfiles: ''
-	~/.tmux.conf: tmux.conf
-	~/.vim: vim
-	~/.vimrc: vimrc
+    ~/.dotfiles: ''
+    ~/.tmux.conf: tmux.conf
+    ~/.vim: vim
+    ~/.vimrc: vimrc
 
-## Not yet implemented
 create:
-	- ~/downloads
-	- ~/.vim/undo-history
+    - ~/downloads
+    - ~/.vim/undo-history
 
 ## Not yet implemented
 shell:
-	- [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive, Installing submodules]
 ```
 ### Configuration options
 #### Link
@@ -58,22 +57,22 @@ Available config parameters:
 ##### Example
 ```yaml
 link:
-	~/.vimrc:
-		relink: true
-		path: vim/
+    ~/.vimrc:
+        relink: true
+        path: vim/
 ```
 ##### path
 If you don't declare a source path, the default behavior is to link from the given link name to the file with the same name except without a leading "." in your current directory. For example, given you are in `~/.dotfiles`, the following config will link to `~/.dotfiles/vimrc`.
 ```yaml
 link:
-	~/.vimrc:
-		path:
+    ~/.vimrc:
+        path:
 ```
 You may also give `path` a directory, in that case a link will be created from the link path to the given directory in your current working directory. For example, again given you are in `~/.dotfiles`, the following config will link to `~/.dotfiles/vim/vimrc`. **Your path must have a trailing slash for dothask to know its a directory, otherwise it will assume you're giving a regular filename**
 ```yaml
 link:
-	~/.vimrc:
-		path: vim/
+    ~/.vimrc:
+        path: vim/
 ```
 #### Dirs
 `dirs` commands specify directories to be created. 
