@@ -21,32 +21,32 @@ Run the tool in the directory containing your dotfiles. E.g., if your dotfiles d
 ## Configuration
 Dothask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
 The expected name for the configuration file is `dot.config.yaml`. You can pass in a custom filepath using `dothask -c <path to config file>`.  
-In addition, you may pass the `--no-confirm` flag to override the default file overwite behavior, which will ask you before relpacing any (non symlink) file. Note that this is the behavior even when the link configuration is set to `force`. **The force flag simply allows for any overwrite to happen at all.**
+In addition, you may pass the `--no-confirm` flag to override the default file overwrite behavior, which will ask you before replacing any (non symlink) file. Note that this is the behavior even when the link configuration is set to `force`. **The force flag simply allows for any overwrite to happen at all.**
 
 ### Example Configuration file
 ```yaml
 defaults:
-  link:
-    relink: true
+	link:
+		relink: true
 
 link:
-  ~/.dotfiles: ''
-  ~/.tmux.conf: tmux.conf
-  ~/.vim: vim
-  ~/.vimrc: vimrc
+	~/.dotfiles: ''
+	~/.tmux.conf: tmux.conf
+	~/.vim: vim
+	~/.vimrc: vimrc
 
 ## Not yet implemented
 create:
-  - ~/downloads
-  - ~/.vim/undo-history
+	- ~/downloads
+	- ~/.vim/undo-history
 
 ## Not yet implemented
 shell:
-  - [git submodule update --init --recursive, Installing submodules]
+	- [git submodule update --init --recursive, Installing submodules]
 ```
 ### Configuration options
 #### Link
-Link specifies how files and directories should be linked. You may specify a file be forcibly linked, overwriting existing files if they exist, but be aware that **the default behavior for force will still require confirmation before removing normal (non-symlink) files.** If you'd like to override this default behavior and make the stript fully automatic you can pass in the `--no-confirm` flag when you run the program.
+Link specifies how files and directories should be linked. You may specify a file be forcibly linked, overwriting existing files if they exist, but be aware that **the default behavior for force will still require confirmation before removing normal (non-symlink) files.** If you'd like to override this default behavior and make the script fully automatic you can pass in the `--no-confirm` flag when you run the program.  
 ##### Format
 Available config parameters:
 | Link Option | Explanation |
@@ -58,16 +58,32 @@ Available config parameters:
 ##### Example
 ```yaml
 link:
-  ~/.vimrc:
-    relink: true
-    path: vim/vimrc
+	~/.vimrc:
+		relink: true
+		path: vim/
 ```
-#### Create -- Not yet implemented
-Create commands specify directories to be created.
+##### path
+If you don't declare a source path, the default behavior is to link from the given link name to the file with the same name except without a leading "." in your current directory. For example, given you are in `~/.dotfiles`, the following config will link to `~/.dotfiles/vimrc`.
+```yaml
+link:
+	~/.vimrc:
+		path:
+```
+You may also give `path` a directory, in that case a link will be created from the link path to the given directory in your current working directory. For example, again given you are in `~/.dotfiles`, the following config will link to `~/.dotfiles/vim/vimrc`. **Your path must have a trailing slash for dothask to know its a directory, otherwise it will assume you're giving a regular filename**
+```yaml
+link:
+	~/.vimrc:
+		path: vim/
+```
+#### Dirs
+`dirs` commands specify directories to be created. 
 ##### Format
-Specified as an array of directories.
+Directories should be specified within a `yaml` list. Unlike directories in `link`, these don't need a trailing `/`, **dothask will assume anything specified in `dirs` should be a directory**
 ##### Example
 ```yaml
+dirs:
+    - ~/downloads
+    - ~/usbmount
 ```
 ## License
 Copyright (c) 2020 Bee Ellis. Released under the MIT License. See [LICENSE.md](license) for details.
