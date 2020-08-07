@@ -36,13 +36,15 @@ import Dothask.Config
 -- | Takes in config path, parses config yaml file at that path, contructing softlinks for each etries.
 buildDots :: String -> Bool -> IO ()
 buildDots configPath noConfirm = do
-    ConfigObj { defaults = cfg, link = lnks } <- parseConfig configPath
+    ConfigObj { defaults = cfg, link = lnks, dirs = dList } <- parseConfig configPath
     usrHome <- home
     curpwd <- pwd
+    let fPath = parsePath usrHome
     mapM_ (\(trg, lnk) ->
-          makeLink curpwd (parsePath usrHome trg) noConfirm
+          makeLink curpwd (fPath trg) noConfirm
           $ setDefaults (linkConfig cfg) lnk
           ) $ HM.toList lnks
+    mapM_ (checkTree True . fPath) $ fromMaybe [] dList
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
@@ -60,7 +62,6 @@ parsePath usrHome txtPth = maybe pth (usrHome </>) filep
   where filep = stripPrefix "~/" pth
         pth = fromText txtPth
 
--- TODO: Need to negotiate LinkConfig w/ set defaults
 -- | Build symlink for LinkConfig datatype. This Function will raise an
 -- IO error if it is unable to create the symlink given the LinkConfig's
 -- options.
@@ -76,7 +77,7 @@ makeLink curpwd pth noConfirm StrictLink
     }
     = do
         printf ("Attempting to link "%s%"\n") lnkTxt
-        dExists <- checkTree (directory pth) c
+        dExists <- checkTree c (directory pth)
         tClean <- cleanTarget frc rln noConfirm pth
         if dExists && tClean
            then symlink fullSrc pth
@@ -135,10 +136,10 @@ requireConfirm fileOp pth = do
        then fileOp pth
     else return False
 
--- | Check that the tree exists and if it can be created.
-checkTree :: FilePath -> Bool -> IO Bool
-checkTree pth True = mktree pth
+-- | Create tree if passed True and return true, otherwise return False if needed tree does not exists.
+checkTree :: Bool -> FilePath -> IO Bool
+checkTree True pth = mktree pth
                      >> printf ("Created directory: "%fp%"\n") pth
                      >> return True
-checkTree pth _    = testdir pth
+checkTree _ pth    = testdir pth
 

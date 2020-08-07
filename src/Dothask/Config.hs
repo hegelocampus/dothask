@@ -25,7 +25,6 @@ import GHC.Generics
 import Turtle (Text, FilePath, decodeString)
 import Prelude hiding (FilePath)
 
--- | TODO Set defaults to be Maybe DefaultsConfig.
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                  -- ^ Defaults config object
     , link     :: !(HM.HashMap Text MaybeLinkCfg)  -- ^ Link configuration

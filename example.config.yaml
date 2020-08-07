@@ -22,4 +22,7 @@ link:
         path: config/redshift
     ~/.config/ranger/rc.conf:
         path: config/ranger
+dirs:
+    - ~/downloads
+    - ~/usbmount
 
