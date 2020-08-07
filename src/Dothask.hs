@@ -14,11 +14,12 @@ module Dothask
     , module Dothask.Config
     ) where
 
---import Control.Monad as CM
+import Control.Monad as CM
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe
-import qualified Data.Text as T
-import Turtle hiding (relative, x)
+import qualified Data.Text as DT
+import Turtle hiding (relative, x, f, shell)
+import qualified Turtle as T (shells)
 import Prelude hiding (FilePath)
 
 import Dothask.Config
@@ -33,10 +34,15 @@ import Dothask.Config
     , StrictLink (..)
     )
 
--- | Takes in config path, parses config yaml file at that path, contructing softlinks for each etries.
+-- | Takes in config path, parses config yaml file at that path, contructs softlinks for each entries in link, makes dirs in dir, and runs shell commands in shell.
 buildDots :: String -> Bool -> IO ()
 buildDots configPath noConfirm = do
-    ConfigObj { defaults = cfg, link = lnks, dirs = dList } <- parseConfig configPath
+    ConfigObj 
+        { defaults = cfg
+        , link = lnks
+        , dir = dList
+        , shell = sList
+        } <- parseConfig configPath
     usrHome <- home
     curpwd <- pwd
     let fPath = parsePath usrHome
@@ -44,7 +50,11 @@ buildDots configPath noConfirm = do
           makeLink curpwd (fPath trg) noConfirm
           $ setDefaults (linkConfig cfg) lnk
           ) $ HM.toList lnks
-    mapM_ (checkTree True . fPath) $ fromMaybe [] dList
+    mapCfgLst (checkTree True . fPath) dList
+    mapCfgLst (`T.shells` empty) sList
+
+mapCfgLst :: (Foldable t, Monad m) => (a -> m b) -> Maybe (t a) -> m ()
+mapCfgLst f lst = when (isJust lst) . mapM_ f $ fromJust lst
 
 -- | Fill the default values for the LinkConfig object based on the set config
 -- values if avaliable, otherwise use default values.
@@ -97,7 +107,7 @@ handleBadLink pth lnkTxt fpError =
 
 -- | Create error message from Format.
 formatForError :: Format Text (a -> Text) -> a -> String
-formatForError txt = T.unpack . format txt
+formatForError txt = DT.unpack . format txt
 
 -- | Clean target if allowed, raise error if file exists and cleaning is not allowed.
 cleanTarget :: Bool -> Bool -> Bool -> FilePath -> IO Bool
