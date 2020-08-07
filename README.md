@@ -19,7 +19,7 @@ You then need to create a `dot.config.yaml` file in your dotfile directory. You 
 Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `stack exec dothask`.
 
 ## Configuration
-DotHask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
+Dothask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
 The expected name for the configuration file is `dot.config.yaml`. You can pass in a custom filepath using `dothask -c <path to config file>`.  
 In addition, you may pass the `--no-confirm` flag to override the default file overwite behavior, which will ask you before relpacing any (non symlink) file. Note that this is the behavior even when the link configuration is set to `force`, the force flag simply allows for any overwrite to happen at all.
 
