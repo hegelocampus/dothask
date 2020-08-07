@@ -54,7 +54,7 @@ Available config parameters:
 | `path` | The source file for the symlink (default: null, automatic) |
 | `create` | When true, create parent directories to the link as needed (default: false) |
 | `relink` | Removes the old target if it's a symlink (default: false) |
-| `force` | Force removes the old target (default: false) |
+| `force` | Permits removal of the old target (default: false) |
 ##### Example
 ```yaml
 link:
