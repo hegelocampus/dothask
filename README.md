@@ -6,7 +6,7 @@
 
 Dotfile setup automation written in Haskell. Heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).
 
-## Instalation:
+## Installation:
 Clone this repository and install dothask with the following commands: 
 ```bash
 $ git clone https://github.com/hegelocampus/dothask.git && cd dothask
@@ -39,9 +39,8 @@ create:
     - ~/downloads
     - ~/.vim/undo-history
 
-## Not yet implemented
 shell:
-    - [git submodule update --init --recursive, Installing submodules]
+    - git submodule update --init --recursive
 ```
 ### Configuration options
 #### Link
@@ -75,14 +74,24 @@ link:
         path: vim/
 ```
 #### Dirs
-`dirs` commands specify directories to be created. 
+`dir` specifies directories to be created. 
 ##### Format
-Directories should be specified within a `yaml` list. Unlike directories in `link`, these don't need a trailing `/`, **dothask will assume anything specified in `dirs` should be a directory**
+Directories should be specified within a `yaml` list. Unlike directories in `link`, these don't need a trailing `/`, **dothask will assume anything specified in `dir` should be a directory**
 ##### Example
 ```yaml
-dirs:
+dir:
     - ~/downloads
     - ~/usbmount
+```
+#### Shell
+`shell` commands specify directories to be created. 
+##### Format
+Shell commands should be specified within a `yaml` list, witch each entry being the full shell script to run.
+##### Example
+```yaml
+shell:
+    - git submodule update --init --recursive
+    - "git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .."
 ```
 ## License
 Copyright (c) 2020 Bee Ellis. Released under the MIT License. See [LICENSE.md](license) for details.
