@@ -29,6 +29,7 @@ import Prelude hiding (FilePath)
 data ConfigObj = ConfigObj
     { defaults :: !DefaultsConfig                  -- ^ Defaults config object
     , link     :: !(HM.HashMap Text MaybeLinkCfg)  -- ^ Link configuration
+    , dirs     :: !(Maybe [Text])                  -- ^ Link configuration
     } deriving stock (Generic, Show, Eq)
 
 instance Y.FromJSON ConfigObj
@@ -75,6 +76,7 @@ empty = ConfigObj
             , createConfig = Nothing
         }
     , link = HM.empty :: HM.HashMap Text MaybeLinkCfg
+    , dirs = Just []
     }
 
 -- | Build a link from a string representing the pathS and a LinkConfig object.
