@@ -65,7 +65,6 @@ If you don't declare a source path, the default behavior is to link from the giv
 ```yaml
 link:
     ~/.vimrc:
-        path:
 ```
 You may also give `path` a directory, in that case a link will be created from the link path to the given directory in your current working directory. For example, again given you are in `~/.dotfiles`, the following config will link to `~/.dotfiles/vim/vimrc`. **Your path must have a trailing slash for dothask to know its a directory, otherwise it will assume you're giving a regular filename**
 ```yaml
