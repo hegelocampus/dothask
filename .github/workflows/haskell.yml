@@ -31,7 +31,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        stack upgrade
         stack update
         stack build --ghc-options="fPIC -fllvm" --only-dependencies --fast -j 9
     - name: Build
