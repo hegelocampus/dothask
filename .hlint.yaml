@@ -46,8 +46,8 @@
 # Generalise map to fmap, ++ to <>
 # - group: {name: generalise, enabled: true}
 
-
-# Ignore some builtin hints
+- ignore: {name: "Redundant do"}
+- ignore: {name: "Parse error"}  # we trust the compiler over HLint
 # - ignore: {name: Use let}
 # - ignore: {name: Use const, within: SpecialModule} # Only within certain modules
 
