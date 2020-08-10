@@ -23,6 +23,11 @@ jobs:
         cache-name: cache-stack
       with:
         path: ~/.stack
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.stack') }}-${{ hashFiles('**/stack.project') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
 
     - name: Install dependencies
       run: |
