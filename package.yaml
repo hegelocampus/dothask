@@ -50,6 +50,5 @@ tests:
     ghc-options:
       - -threaded
     dependencies:
-      - dothask
       - hspec
       - QuickCheck

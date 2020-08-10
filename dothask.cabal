@@ -56,7 +56,6 @@ test-suite ghci-test
   build-depends:
       QuickCheck
     , base >=4.13.0.0 && <4.14
-    , dothask
     , hspec
     , optparse-applicative
     , text
