@@ -17,7 +17,7 @@ main :: IO ()
 main = hspec $ do
     describe "Dothask.Config.parseConfig" $ do
         it "does not return an empty ConfigObj" $
-            parseConfig "dot.config.yaml" `shouldNotReturn` C.empty
+            parseConfig "example.config.yaml" `shouldNotReturn` C.empty
 
         context "When passed something other than a yaml file" .
             it "throws an exception" $
