@@ -13,7 +13,7 @@ category:       CLI
 homepage:       https://github.com/bee/dothask#readme
 bug-reports:    https://github.com/bee/dothask/issues
 author:         Bee Ellis
-maintainer:     Bee Ellis <bellis@gmail.com>
+maintainer:     Bee Ellis <bellis8099@gmail.com>
 copyright:      2020 Bee Ellis
 license:        MIT
 license-file:   LICENSE
@@ -25,35 +25,18 @@ source-repository head
   type: git
   location: https://github.com/bee/dothask
 
-library
-  exposed-modules:
-      Dothask
-      Dothask.Config
-  other-modules:
-      Paths_dothask
-  hs-source-dirs:
-      src/
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates
-  build-depends:
-      base >=4.13.0.0 && <4.14
-    , optparse-applicative
-    , text
-    , turtle
-    , unix
-    , unordered-containers
-    , yaml
-  default-language: Haskell2010
-
 executable dothask
   main-is: Main.hs
   other-modules:
+      Dothask
+      Dothask.Config
       Paths_dothask
   hs-source-dirs:
       app/
+      src/
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -threaded -rtsopts
   build-depends:
       base >=4.13.0.0 && <4.14
-    , dothask
     , optparse-applicative
     , text
     , turtle
