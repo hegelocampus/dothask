@@ -46,7 +46,9 @@ executables:
 tests:
   ghci-test:
     main: Spec.hs
-    source-dirs: test/
+    source-dirs:
+      - test/
+      - src/
     ghc-options:
       - -threaded
     dependencies:

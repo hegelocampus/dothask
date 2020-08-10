@@ -49,9 +49,12 @@ test-suite ghci-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Dothask
+      Dothask.Config
       Paths_dothask
   hs-source-dirs:
       test/
+      src/
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -threaded
   build-depends:
       QuickCheck
