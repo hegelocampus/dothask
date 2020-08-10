@@ -33,7 +33,7 @@ jobs:
       run: |
         stack upgrade
         stack update
-        stack build --ghc-options="fPIC -fllvm" --only-dependencies --bench --test  --fast -j 9
+        stack build --ghc-options="fPIC -fllvm" --only-dependencies --fast -j 9
     - name: Build
       run: |
         stack build --bench --test
