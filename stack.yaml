@@ -1,4 +1,7 @@
 resolver: lts-16.8
+nix:
+  enable: true
+  packages: [pkgconfig zeromq zlib]
 extra-deps:
   - yaml-0.11.3.0
   - text-1.2.4.0
