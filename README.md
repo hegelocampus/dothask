@@ -7,7 +7,7 @@
 
 Dotfile setup automation written in Haskell. Heavily inspired by @anishathalye's [dotbot](https://github.com/anishathalye/dotbot).  
   
-If you're unfamiliar with dotfiles as a concept I would recommed you read [this article to learn more.](https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789)
+If you're unfamiliar with dotfiles as a concept I would recommend you read [this article to learn more.](https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789)
 
 ## Installation:
 Clone this repository and install dothask with the following commands: 
