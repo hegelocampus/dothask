@@ -1,5 +1,5 @@
 name: dothask
-version: '0.0.1'
+version: '1.0.0'
 synopsis: Dotfile setup utility
 description: |
   Dotfile setup automation written in Haskell.
@@ -17,6 +17,7 @@ license-file: LICENSE
 
 extra-source-files:
   - README.md
+  - example.config.yaml
 
 dependencies:
   - base ^>= 4.13.0.0
