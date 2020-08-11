@@ -32,9 +32,9 @@ jobs:
     - name: Install dependencies
       run: |
         stack update
-        stack build --ghc-options="fPIC -fllvm" --only-dependencies --fast -j 9
+        stack build --ghc-options="fPIC -fllvm" --only-dependencies
     - name: Build
       run: |
-        stack build --bench --test
+        stack build --test --bench --no-run-tests --no-run-benchmarks
     - name: Run tests
       run: stack test
