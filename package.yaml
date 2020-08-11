@@ -7,7 +7,7 @@ description: |
 
 homepage: https://github.com/bee/dothask#readme
 bug-reports: https://github.com/bee/dothask/issues
-category: CLI
+category: CLI, config, configuration, linux
 author: Bee Ellis
 maintainer: Bee Ellis <bellis8099@gmail.com>
 github: bee/dothask

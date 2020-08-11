@@ -9,7 +9,7 @@ version:        0.0.1
 synopsis:       Dotfile setup utility
 description:    Dotfile setup automation written in Haskell.
                 You can find the documentation at https://github.com/bee/dothask#readme
-category:       CLI
+category:       CLI, config, configuration, linux
 homepage:       https://github.com/bee/dothask#readme
 bug-reports:    https://github.com/bee/dothask/issues
 author:         Bee Ellis
