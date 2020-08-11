@@ -17,7 +17,11 @@ $ stack install
 You then need to create a `dot.config.yaml` file in your dotfile directory. You can use the [`example.config.yaml`](example.config.yaml) as a starting place if you'd like.
 
 ## How to use:
-Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should cd into `~/.dotfiles` before running `stack exec dothask`.
+Run the tool in the directory containing your dotfiles. E.g., if your dotfiles directory is `~/.dotfiles` you should do something like this:
+```bash
+$ cd ~/.dotfiles
+$ stack exec dothask
+```
 
 ## Configuration
 Dothask uses YAML-formatted configuration files to declare which files need to be **linked**, which directories need to be **created**, and which **shell commands** should be ran.
