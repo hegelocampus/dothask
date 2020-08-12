@@ -1,8 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: 8f9973e66fffd78d773fc8f8b6cac91d0236f34fcde7437563fae3903d031d55
 
 name:           dothask
 version:        1.0.0
@@ -38,12 +40,12 @@ executable dothask
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -threaded -rtsopts
   build-depends:
       base >=4.13.0.0 && <4.14
-    , optparse-applicative
-    , text
-    , turtle
-    , unix
-    , unordered-containers
-    , yaml
+    , optparse-applicative >=0.15.1.0 && <0.16
+    , text >=1.2.3.2 && <1.3
+    , turtle >=1.5.19 && <1.6
+    , unix >=2.7.2.2 && <2.8
+    , unordered-containers >=0.2.10.0 && <0.3
+    , yaml >=0.11.3.0 && <0.12
   default-language: Haskell2010
 
 test-suite ghci-test
@@ -58,13 +60,13 @@ test-suite ghci-test
       src/
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-uni-patterns -Wincomplete-record-updates -threaded
   build-depends:
-      QuickCheck
+      QuickCheck >=2.13.2 && <2.14
     , base >=4.13.0.0 && <4.14
-    , hspec
-    , optparse-applicative
-    , text
-    , turtle
-    , unix
-    , unordered-containers
-    , yaml
+    , hspec >=2.7.1 && <2.8
+    , optparse-applicative >=0.15.1.0 && <0.16
+    , text >=1.2.3.2 && <1.3
+    , turtle >=1.5.19 && <1.6
+    , unix >=2.7.2.2 && <2.8
+    , unordered-containers >=0.2.10.0 && <0.3
+    , yaml >=0.11.3.0 && <0.12
   default-language: Haskell2010
